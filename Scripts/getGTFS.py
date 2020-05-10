@@ -6,7 +6,6 @@ from transitfeeds import TransitFeeds
 API_KEY = os.environ.get("GTFSFeed")
 tf = TransitFeeds(API_KEY)
 i = 0
-# os.chdir("..")
 print("WD: "+os.getcwd())
 feedid = 'sptrans/1049'
 
