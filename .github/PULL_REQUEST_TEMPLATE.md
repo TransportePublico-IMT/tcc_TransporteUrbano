@@ -1,20 +1,38 @@
-## Seções Adicionadas :fa-plus-circle:
+# Pull Request
 
--   Nome da Seção Adicionada
--   Nome da Seção Adicionada
+Do que se trata esse request
 
-## Seção Alterada :fa-exclamation-circle:
+## Arquivos alterados
 
--   Nome da Seção Alterada
--   Nome da Seção Alterada
+Quais arquivos foram modificados
 
-## Seção Excluida :fa-times-circle:
+## Warnings
 
--   Nome da Seção Excluida
--   Nome da Seção Excluida
+Alertas que essa request adicionou ao compilar
 
-## Codigo está gerendo o PDF?
--   [x] Sim
--   [x] Não
+## Testes
+
+### Teste Unitario
+
+-  [ ] Passou
+-  [ ] Não Passou
+
+### Teste de Integração
+
+-  [ ] Passou
+-  [ ] Não Passou
+
+### Navegadores Testados
+
+- [ ] Chrome
+- [ ] Firefox
+- [ ] Safari
+- [ ] Edge
+- [ ] Não se aplica
+
+## Deploy
+
+-  [ ] Realizado com sucesso
+-  [ ] Falhou
 
 ## Observações
