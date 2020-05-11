@@ -1,0 +1,19 @@
+language: python
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.cache/pre-commit
+
+python:
+  - "3.7"
+
+stages:
+  - linting
+
+jobs:
+  include:
+    - stage: linting
+      name: "pre-commit"
+      python: "3.7"
+      install: pip install pre-commit
+      script: pre-commit run --all --show-diff-on-failure --verbose --color always
