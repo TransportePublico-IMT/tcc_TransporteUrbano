@@ -1,0 +1,27 @@
+{% extends 'panel/base.html' %}
+{% block content %}
+{% load static %}
+
+{% load plotly_dash %}
+{% plotly_header %}
+
+<div class="row container-fluid">
+    <div class="col-4">
+        <h2 class="my-4 text-center">Situação dos Trens e Metrôs</h2>
+        <div class="col-12" id="chartDiretoDosTrens"></div>
+    </div>
+    <div class="col-4">
+        <h2 class="my-4 text-center">Direto dos Trens</h2>
+        <div class="text-center" id="diretodostrens"></div>
+    </div>
+    <div class="col-4">
+        <h2 class="my-4 text-center">SP-Trans</h2>
+        <div class="text-center" id="sptrans"></div>
+    </div>    
+</div>
+
+
+<script src="{% static 'scripts/dashboard.js' %}"></script>
+
+{% plotly_footer %}
+{% endblock %}
