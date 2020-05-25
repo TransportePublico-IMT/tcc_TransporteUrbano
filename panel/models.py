@@ -1,7 +1,9 @@
 from django.db import models
 
+
 class Dashboard(models.Model):
     last_update = models.DateTimeField()
+
 
 class Chart(models.Model):
     title = models.CharField(max_length=255)
