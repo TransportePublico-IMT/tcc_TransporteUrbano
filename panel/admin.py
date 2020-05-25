@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Dashboard, Chart
+
+from .models import Chart, Dashboard
 
 admin.site.register(Dashboard)
 admin.site.register(Chart)
