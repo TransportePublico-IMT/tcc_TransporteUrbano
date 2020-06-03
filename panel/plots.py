@@ -27,7 +27,7 @@ def direto_dos_trens(label_list, parent_list, hovertext_list, color_list):
         marker={"colors": color_list},
     )
     fig = go.Figure(
-        data=[trace], layout=go.Layout(margin=dict(t=0, b=0, L=0, r=0), height=300)
+        data=[trace], layout=go.Layout(margin=dict(t=0, b=0, l=0, r=0), height=300)
     )
     plot_div = plot(fig, output_type="div", include_plotlyjs=False)
     return plot_div
