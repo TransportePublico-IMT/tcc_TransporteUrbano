@@ -8,12 +8,13 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 from . import plots
 
-
+@login_required
 def home(request):
-    return render(request, "panel/home.html", {"page_title": "SA-Trans Dashboard"})
+    return render(request, "panel/dasgraphs.html",{"page_title": "SA-Trans"})
 
 
 class SignUp(generic.CreateView):
