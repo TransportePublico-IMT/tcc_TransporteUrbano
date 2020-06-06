@@ -1,25 +1,66 @@
 {% extends 'panel/base.html' %}
 {% block content %}
 {% load static %}
-
 {% load plotly_dash %}
 {% plotly_header %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-<div class="row container-fluid">
-    <div class="col-4">
-        <h2 class="my-4 text-center">Situação dos Trens e Metrôs</h2>
-        <div class="col-12" id="chartDiretoDosTrens"></div>
+<div class="row mt-3">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">Primary Card</div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#">View Details</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
     </div>
-    <div class="col-4">
-        <h2 class="my-4 text-center">Direto dos Trens</h2>
-        <div class="text-center" id="diretodostrens"></div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body">Warning Card</div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#">View Details</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
     </div>
-    <div class="col-4">
-        <h2 class="my-4 text-center">SP-Trans</h2>
-        <div class="text-center" id="sptrans"></div>
-    </div>    
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body">Success Card</div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#">View Details</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-danger text-white mb-4">
+            <div class="card-body">Danger Card</div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#">View Details</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
 </div>
-
+<div class="row">
+    <div class="col-xl-4">
+        <div class="card mb-4">
+            <div class="card-header py-1"><i class="fas fa-chart-pie mr-1"></i>Situação Trens e Metrôs</div>
+            <div class="card-body">
+                <div class="col-12" id="chartDiretoDosTrens"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-8">
+        <div class="card mb-4">
+            <div class="card-header py-1"><i class="fas fa-map-marker-alt mr-1"></i>SP-Trans</div>
+            <div class="card-body">
+                <div class="text-center" id="sptrans"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="{% static 'scripts/dashboard.js' %}"></script>
 

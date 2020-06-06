@@ -14,7 +14,7 @@ from . import plots
 
 @login_required
 def home(request):
-    return render(request, "panel/dasgraphs.html",{"page_title": "SA-Trans"})
+    return render(request, "panel/home.html",{"page_title": "Dashboard"})
 
 
 class SignUp(generic.CreateView):

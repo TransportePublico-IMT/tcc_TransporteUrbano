@@ -46,9 +46,7 @@ $(document).ready(function () {
             'https://www.diretodostrens.com.br/api',
             '/status',
             function(data){
-                console.log(data["plot"])
                 $('#chartDiretoDosTrens').html("" + (data["plot"]));
-                $('#diretodostrens').text(JSON.stringify(data["json"]));
             }
         )
     }
