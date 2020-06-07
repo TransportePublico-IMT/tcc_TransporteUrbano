@@ -17,3 +17,6 @@ jobs:
       python: "3.7"
       install: pip install pre-commit
       script: pre-commit run --all --show-diff-on-failure --verbose --color always
+
+notifications:
+  slack: fodoesdoitauabc:W9UCLJUleEkUCgLEDZesVfhy
