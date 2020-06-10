@@ -27,7 +27,24 @@ def direto_dos_trens(label_list, parent_list, hovertext_list, color_list):
         marker={"colors": color_list},
     )
     fig = go.Figure(
-        data=[trace], layout=go.Layout(margin=dict(t=0, b=0, l=0, r=0), height=300)
+        data=[trace], layout=go.Layout(margin=dict(t=0, b=0, l=0, r=0), height=250)
     )
+    plot_div = plot(fig, output_type="div", include_plotlyjs=False)
+    return plot_div
+
+def sp_trans_localizacao(data):
+    import plotly.express as px
+    px.set_mapbox_access_token("pk.eyJ1IjoibHVjYWV6ZWxsbmVyIiwiYSI6ImNrYjRiNm12ZDBodHkyc284M3FteHRyNGgifQ.73HUnz3EYhNZsilwkR4OdQ")
+    lon_list = []
+    lat_list = []
+    for linha in data["l"]:
+        for bus in linha["vs"]:
+            lat_list.append(bus["py"])
+            lon_list.append(bus["px"])
+
+    fig = px.scatter_mapbox(lat=lat_list, lon=lon_list, zoom=10)
+    
+    fig.update_layout(height=250, margin={"r":0,"t":0,"l":0,"b":0})
+
     plot_div = plot(fig, output_type="div", include_plotlyjs=False)
     return plot_div

@@ -140,5 +140,6 @@ def direto_dos_trens(request):
 @csrf_exempt
 def sptrans(request):
     data = api_get_data(request)
-    return JsonResponse({"json": data, "plot": {}})
+    plot_div = plots.sp_trans_localizacao(data)
+    return JsonResponse({"json": data, "plot": plot_div})
     # return HttpResponse(status=200)
