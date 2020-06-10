@@ -24,8 +24,8 @@
 </head>
 
 <body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand px-0" href="{% url 'home' %}">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark pl-0">
+        <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'logo.png' %}" class="d-inline-block" alt="logo"/>
             <!-- <span class="ml-1">SA-Trans</span> -->
         </a>
@@ -100,7 +100,7 @@
                     {% endblock %}
                 </div>
             </main>
-            <footer class="py-4 bg-light mt-auto">
+            <footer class="py-2 bg-light mt-auto">
                 <div class="container-fluid">
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">&copy; SA-Trans {% now "Y" %}</div>

@@ -23,17 +23,19 @@ $(document).ready(function () {
         callapi(
             'apis/sptrans',
             'http://api.olhovivo.sptrans.com.br/v2.1',
-            '/Posicao/Linha',
+            '/Posicao',
             function(data){
-                $('#sptrans').text(JSON.stringify(data["json"]));
+                $('#sptrans').html("" + (data["plot"]));
+                // $('#sptrans').text(JSON.stringify(data["json"]));
             },
-            {'codigoLinha': '111',},
+            // {'codigoLinha': '111',},
+            {},
             '/Login/Autenticar?token=d56f9613a83a7233521ae5413765d15dae0b499967f2a12384ce2f7cd2fe62a9',
         )
     }
 
     getDataSpTrans();
-    setInterval(getDataSpTrans, 5000);
+    setInterval(getDataSpTrans, 40000);
     
     //DIRETODOSTRENS
     situacaoDiretoDosTrens = {};
