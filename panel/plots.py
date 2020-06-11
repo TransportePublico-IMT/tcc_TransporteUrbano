@@ -53,7 +53,7 @@ def update_direto_dos_trens(self):
         marker={"colors": plot_info['color_list']},
         )
     ret = {'data': [data],
-           'layout': go.Layout(margin=dict(t=0, b=0, l=0, r=0), height=250)}
+           'layout': go.Layout(margin=dict(t=0, b=0, l=0, r=0), height=250,uirevision= True)}
     return ret
 
 @plot_localizacao_sptrans.callback(
@@ -78,16 +78,19 @@ def sp_trans_localizacao(data):
     
     ret = {'data': [data],
             'layout': go.Layout(hovermode='closest',
+                                hoverdistance=1,
+                                
                                 mapbox=dict(
                                     accesstoken=mapbox_access_token,
-                                    # bearing=0,
+                                    bearing=0,
                                     center=go.layout.mapbox.Center(
                                         lat=-23.55,
                                         lon=-46.64
                                     ),
                                     pitch=0,
                                     zoom=9,
-                                    style='light'
+                                    style='light',
                                 ),
-                                margin=dict(t=0, b=0, l=0, r=0))}
+                                uirevision= True,
+                                margin=dict(t=0, b=0, l=0, r=0),height=250)}
     return ret
