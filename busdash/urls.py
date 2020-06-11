@@ -13,9 +13,6 @@ urlpatterns = [
     path("cadastro", views.SignUp.as_view(), name="cadastro"),
     path("login", auth_views.LoginView.as_view(), name="login"),
     path("logout", auth_views.LogoutView.as_view(), name="logout"),
-    # APIs
-    path("apis/direto-dos-trens", views.direto_dos_trens, name="apis_direto_dos_trens"),
-    path("apis/sptrans", views.sptrans, name="apis_sptrans"),
     # DASH PLOTLY
     path("django_plotly_dash/", include("django_plotly_dash.urls")),
 ]

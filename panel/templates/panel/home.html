@@ -47,16 +47,16 @@
     <div class="col-xl-3">
         <div class="card mb-3">
             <div class="card-header py-1"><i class="fas fa-chart-pie mr-1"></i>Situação Trens e Metrôs</div>
-            <div class="card-body p-1">
-                <div class="col-12" id="chartDiretoDosTrens"></div>
+            <div class="card-body p-1" style="height:250px">
+                {% plotly_app name="DiretoDosTrens" %}
             </div>
         </div>
     </div>
     <div class="col-xl-6">
         <div class="card mb-3">
             <div class="card-header py-1"><i class="fas fa-map-marker-alt mr-1"></i>SP-Trans</div>
-            <div class="card-body p-1">
-                <div class="text-center" id="sptrans"></div>
+            <div class="card-body p-1" style="height:250px">
+                {% plotly_app name="LocSptrans" %}
             </div>
         </div>
     </div>
@@ -69,8 +69,6 @@
         </div>
     </div>
 </div>
-
-<script src="{% static 'scripts/dashboard.js' %}"></script>
 
 {% plotly_footer %}
 {% endblock %}
