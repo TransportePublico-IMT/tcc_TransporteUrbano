@@ -2,9 +2,7 @@
 {% block content %}
 {% load static %}
 {% load plotly_dash %}
-{% plotly_header %}
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
 <div class="row mt-3">
     <div class="col-xl-3 col-md-6">
         <div class="card bg-primary text-white mb-3">
@@ -47,16 +45,16 @@
     <div class="col-xl-3">
         <div class="card mb-3">
             <div class="card-header py-1"><i class="fas fa-chart-pie mr-1"></i>Situação Trens e Metrôs</div>
-            <div class="card-body p-1" style="height:250px">
-                {% plotly_app name="DiretoDosTrens" %}
+            <div class="card-body p-1" style="height: 270px;" >
+                {% plotly_app name="DiretoDosTrens" ratio=1 %}
             </div>
         </div>
     </div>
     <div class="col-xl-6">
         <div class="card mb-3">
             <div class="card-header py-1"><i class="fas fa-map-marker-alt mr-1"></i>SP-Trans</div>
-            <div class="card-body p-1" style="height:250px">
-                {% plotly_app name="LocSptrans" %}
+            <div class="card-body p-1" style="height: 270px;" >
+                {% plotly_app name="LocSptrans" ratio=1 %}
             </div>
         </div>
     </div>
@@ -69,6 +67,5 @@
         </div>
     </div>
 </div>
-
-{% plotly_footer %}
+<script src="{% static 'scripts/custom.js' %}"></script>
 {% endblock %}
