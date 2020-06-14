@@ -60,9 +60,11 @@
     </div>
     <div class="col-xl-3">
         <div class="card mb-3">
-            <div class="card-header py-1"><i class="fas fa-map-marker-alt mr-1"></i>SP-Trans</div>
-            <div class="card-body">
-                <div class="text-center" id="climatempo"></div>
+            <div class="card-header py-1"><i class="fas fa-cloud-rain mr-1"></i>ClimaTempo</div>
+            <div class="card-body p-1">
+                <div class="text-center" style="height: 270px;" id="climatempo">
+                    {% plotly_app name="ClimaTemp" ratio=1 %}
+                </div>
             </div>
         </div>
     </div>

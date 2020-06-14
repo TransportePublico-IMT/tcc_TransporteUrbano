@@ -10,9 +10,10 @@ def api_get_data(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMetho
     params = "?"
     for param in paramsDict:
         params += param + "=" + paramsDict[param]
+    if params == "?":
+        params = ""
 
     call = base_url + url + params
-
     if apiPreUrl != "":
         if apiPreUrlMethod.lower() == "get":
             pre_response = requests.get(base_url + apiPreUrl)
@@ -113,4 +114,9 @@ def sp_trans_localizacao(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPre
             symbol_list.append("bus")
     
     ret = {'lon_list': lon_list, 'lat_list': lat_list, 'symbol_list': symbol_list}
+    return ret
+
+def climatempo_tempo(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
+    data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)    
+    ret = data
     return ret

@@ -1,4 +1,5 @@
 import dash
+#import dash_daq as daq
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
@@ -30,6 +31,29 @@ plot_localizacao_sptrans.layout = html.Div([
         interval=5000,
         n_intervals=0
     )
+])
+
+plot_tempo_climatempo = DjangoDash('ClimaTemp')
+plot_tempo_climatempo.layout = html.Div([
+    dcc.Graph(id='tempo_climaTemp'),
+    dcc.Interval(
+        id='temp-climatempo-update',
+        interval=9000000,
+        n_intervals=0
+    )
+#     daq.Thermometer(
+#     id='tempo_climaTemp',
+#     min=95,
+#     max=105,
+#     value=100,
+#     showCurrentValue=True,
+#     units="C"
+# ),
+#     dcc.Interval(
+#         id='temp-climatempo-update',
+#         interval=9000000,
+#         n_intervals=0
+#     )
 ])
 
 
@@ -93,4 +117,22 @@ def sp_trans_localizacao(data):
                                 ),
                                 uirevision= True,
                                 margin=dict(t=0, b=0, l=0, r=0),height=250)}
+    return ret
+
+@plot_tempo_climatempo.callback(
+    dash.dependencies.Output('tempo_climaTemp', 'figure'),
+    [dash.dependencies.Input('temp-climatempo-update', 'n_intervals')])
+def update_climatempo(self):
+    idCity_STAndre = 3667
+    token = "cd640a1a7fd7767e9afc268efcb06882"
+    url = "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
+    urlplus = str(idCity_STAndre) + "/current?token=" + token
+    plot_info = apis.climatempo_tempo(url,urlplus)
+    data = go.Indicator(
+    mode = "gauge+number",
+    value = plot_info["data"]["temperature"],
+    domain = {'x': [0, 1], 'y': [0, 1]})
+    # title = {'text': "Temperatura"})
+    ret = {'data': [data],
+           'layout': go.Layout(margin=dict(t=0, b=0, l=0, r=0), height=250,uirevision= True)}
     return ret
