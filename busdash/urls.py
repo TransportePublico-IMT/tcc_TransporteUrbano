@@ -9,8 +9,7 @@ from onibus.api.viewsets import OnibusViewSet
 from panel import plots, views
 
 router = routers.DefaultRouter()
-router.register('onibus', OnibusViewSet)
-
+router.register('onibus', OnibusViewSet, basename='Onibus')
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.home, name="home"),
