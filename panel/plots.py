@@ -188,17 +188,17 @@ def update_climatempo(self):
 def update_cards_lotacao(self):
     vazio = apis.cards_lotacao(
         'http://localhost:8000/api',
-        '/onibus',
+        '/onibus-lotacao',
         {"lotacao":"vazio"}
     )
     normal = apis.cards_lotacao(
         'http://localhost:8000/api',
-        '/onibus',
+        '/onibus-lotacao',
         {"lotacao":"normal"}
     )
     cheio = apis.cards_lotacao(
         'http://localhost:8000/api',
-        '/onibus',
+        '/onibus-lotacao',
         {"lotacao":"cheio"}
     )
     now = datetime.datetime.now()
