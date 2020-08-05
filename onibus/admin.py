@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Onibus
+from .models import OnibusLotacao, OnibusPosicao
 
-admin.site.register(Onibus)
+admin.site.register(OnibusLotacao)
+admin.site.register(OnibusPosicao)
 

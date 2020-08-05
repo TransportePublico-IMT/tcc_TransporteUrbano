@@ -47,8 +47,11 @@ INSTALLED_APPS = [
     "rest_framework",
     "panel",
     "onibus",
+    "parada",
+    "linha",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
-    "bootstrap4"
+    "bootstrap4",
+    "django_celery_results"
 ]
 
 MIDDLEWARE = [
@@ -159,3 +162,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "busdash/static")]
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Sao_Paulo'
