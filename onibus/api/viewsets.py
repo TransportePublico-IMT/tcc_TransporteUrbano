@@ -39,3 +39,21 @@ class OnibusLotacaoViewSet(ModelViewSet):
 class OnibusPosicaoViewSet(ModelViewSet):
     serializer_class = OnibusPosicaoSerializer
     queryset = OnibusPosicao.objects.all()
+
+     def create(self, request, *args, **kwargs):
+        try:
+            for i in request.data['o']:
+                onibus = OnibusPosicao(
+                    id_onibus =  i['id_onibus'],
+                    onibus_deficiente = i["onibus_deficiente"],
+                    horario_atualizacao_localizacao = i["horario_atualizacao_localizacao"],
+                    latitude = i["latitude"],
+                    longitude = i["longitude"],
+                    frota = i["frota"]
+                )
+                onibus.save()
+            return Response({'status': 'sucesso'})
+        except Exception as e:
+            return Response({'status': 'erro: ' + str(e)})
+
+   

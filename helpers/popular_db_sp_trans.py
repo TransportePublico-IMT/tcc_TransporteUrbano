@@ -60,3 +60,32 @@ def popular_linhas():
     r = requests.post(url, data=json.dumps(data), headers=headers)
 
     return r.json()
+
+def popular_onibus():
+    data = api_get_data("http://api.olhovivo.sptrans.com.br/v2.1",
+                        "/Posicao",
+                        apiPreUrl='/Login/Autenticar?token=d56f9613a83a7233521ae5413765d15dae0b499967f2a12384ce2f7cd2fe62a9')
+    list_onibus = []
+    for i in data["l"]:
+        for y in i["vs"]: 
+            onibus = {
+                'id_onibus': y["p"],
+                'onibus_deficiente': y["a"],
+                'horario_atualizacao_localizacao': y["ta"],
+                'latitude': y["py"],
+                'longitude': y["px"],
+                'id_linha': i["cl"],
+                'frota': i["sl"]
+            }
+            list_onibus.append(onibus)
+    
+    url = "http://localhost:8000/api/onibus-posicao/"
+    headers = {
+        'Content-Type': 'application/json',
+        'Connection' : 'keep-alive',
+        'Accept': "*/*"
+    }
+    data = {'o': list_onibus}
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+
+    return r.json()
