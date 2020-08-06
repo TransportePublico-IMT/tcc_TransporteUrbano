@@ -15,9 +15,6 @@ from . import plots
 
 @login_required
 def home(request):
-    #celery -A busdash worker --pool=gevent -l info
-    tasks.create_paradas_if_not_exist.delay()
-    tasks.create_linhas_if_not_exist.delay()
     return render(request, "panel/home.html",{"page_title": "Dashboard"})
 
 

@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from onibus.models import OnibusLotacao, OnibusPosicao
+from linha.models import Linha
 from .serializers import OnibusLotacaoSerializer, OnibusPosicaoSerializer
 from helpers.processar_img import processar_img
 import random
@@ -40,8 +41,9 @@ class OnibusPosicaoViewSet(ModelViewSet):
     serializer_class = OnibusPosicaoSerializer
     queryset = OnibusPosicao.objects.all()
 
-     def create(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         try:
+            lista_onibus_posicao = []
             for i in request.data['o']:
                 onibus = OnibusPosicao(
                     id_onibus =  i['id_onibus'],
@@ -49,9 +51,11 @@ class OnibusPosicaoViewSet(ModelViewSet):
                     horario_atualizacao_localizacao = i["horario_atualizacao_localizacao"],
                     latitude = i["latitude"],
                     longitude = i["longitude"],
-                    frota = i["frota"]
+                    frota = i["frota"],
+                    id_linha = Linha.objects.get(id_linha=i["id_linha"])
                 )
-                onibus.save()
+                lista_onibus_posicao.append(onibus)
+            OnibusPosicao.objects.bulk_create(lista_onibus_posicao)
             return Response({'status': 'sucesso'})
         except Exception as e:
             return Response({'status': 'erro: ' + str(e)})
