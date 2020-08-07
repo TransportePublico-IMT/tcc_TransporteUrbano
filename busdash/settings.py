@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "onibus",
     "parada",
     "linha",
+    "trem",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
     "bootstrap4",
     "django_celery_results"
