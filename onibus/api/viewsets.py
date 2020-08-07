@@ -35,7 +35,7 @@ class OnibusLotacaoViewSet(ModelViewSet):
             onibus_lotacao.save()
             return Response({'status': 'sucesso'})
         except:
-            return Response({'status': 'erro'})
+            return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
 
 class OnibusPosicaoViewSet(ModelViewSet):
     serializer_class = OnibusPosicaoSerializer
@@ -58,6 +58,6 @@ class OnibusPosicaoViewSet(ModelViewSet):
             OnibusPosicao.objects.bulk_create(lista_onibus_posicao)
             return Response({'status': 'sucesso'})
         except Exception as e:
-            return Response({'status': 'erro: ' + str(e)})
+            return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
 
    

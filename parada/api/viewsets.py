@@ -20,4 +20,4 @@ class ParadaViewSet(ModelViewSet):
                 )
             return Response({'status': 'sucesso'})
         except Exception as e:
-            return Response({'status': 'erro: ' + str(e)})
+            return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
