@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "parada",
     "linha",
     "trem",
+    "climatempo",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
     "bootstrap4",
     "django_celery_results"

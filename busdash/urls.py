@@ -8,6 +8,7 @@ from onibus.api.viewsets import OnibusLotacaoViewSet, OnibusPosicaoViewSet
 from linha.api.viewsets import LinhaViewSet
 from parada.api.viewsets import ParadaViewSet
 from trem.api.viewsets import TremViewSet
+from climatempo.api.viewsets import ClimaTempoViewSet
 
 from panel import plots, views
 
@@ -17,6 +18,7 @@ router.register('onibus-posicao', OnibusPosicaoViewSet, basename='OnibusPosicao'
 router.register('linhas', LinhaViewSet, basename='Linha')
 router.register('paradas', ParadaViewSet, basename='Parada')
 router.register('trens', TremViewSet, basename='Trem')
+router.register('climatempo', ClimaTempoViewSet, basename='ClimaTempo')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
