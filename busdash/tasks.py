@@ -40,3 +40,11 @@ def save_trens_metros():
     if status.startswith("erro"):
         raise TaskFailure(status)
     return status
+
+@periodic_task(run_every=(crontab(minute='*/1')), name="save_clima_tempo", ignore_result=True)
+def save_clima_tempo():
+    status_json = popular_db_apis.popular_climatempo()
+    status = status_json['status']
+    if status.startswith("erro"):
+        raise TaskFailure(status)
+    return status
