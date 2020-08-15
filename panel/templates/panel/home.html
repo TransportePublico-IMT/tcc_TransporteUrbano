@@ -1,0 +1,53 @@
+{% extends 'panel/base.html' %}
+{% block content %}
+{% load static %}
+{% load plotly_dash %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<div class="row mt-3">
+    <div class="col-7">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-video mr-1"></i>Câmeras</div>
+            <div class="card-body p-2" style="height: 150px;" >
+                {% plotly_app_bootstrap name="CardsLotacao" aspect="21by9"%}
+            </div>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-exclamation-circle mr-1"></i>Alertas</div>
+            <div class="card-body p-2" style="height: 150px;" >
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-7">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Localização SP-Trans</div>
+            <div class="card-body p-1" style="height: 270px;" >
+                {% plotly_app name="LocSptrans" ratio=0.45 %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-chart-pie mr-1"></i>Situação Trens e Metrôs</div>
+            <div class="card-body p-1" style="height: 270px;" >
+                {% plotly_app name="DiretoDosTrens" ratio=1 %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-thermometer-half mr-1"></i>Temperatura</div>
+            <div class="card-body p-1" style="height: 270px;">
+                <div class="text-center" id="climatempo">
+                    {% plotly_app name="ClimaTemp" ratio=1.45 %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'scripts/custom.js' %}"></script>
+{% endblock %}

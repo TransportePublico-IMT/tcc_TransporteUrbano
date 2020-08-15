@@ -7,6 +7,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Celery stuff
+celerybeat-schedule.*
+celerybeat.pid
+
 # Distribution / packaging
 .Python
 build/
@@ -59,9 +63,15 @@ cover/
 
 # Django stuff:
 *.log
+*.pot
+*.pyc
+__pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+/env
+/media
+/static
 
 # Flask stuff:
 instance/
@@ -99,10 +109,6 @@ ipython_config.py
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
 
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
 # SageMath parsed files
 *.sage.py
 
@@ -138,7 +144,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
-# static files generated from Django application using `collectstatic`
-media
-static
