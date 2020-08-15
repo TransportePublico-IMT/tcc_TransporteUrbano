@@ -1,9 +1,11 @@
 import dash
-#import dash_daq as daq
+import dash_daq as daq
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import plotly.express as px
 from django_plotly_dash import DjangoDash
+import datetime
 
 import plotly.io as pio
 pio.renderers.default = "svg"
@@ -33,29 +35,65 @@ plot_localizacao_sptrans.layout = html.Div([
     )
 ])
 
-plot_tempo_climatempo = DjangoDash('ClimaTemp')
+plot_cards_lotacao = DjangoDash('CardsLotacao', add_bootstrap_links=True)
+plot_cards_lotacao.layout = html.Div([
+    dbc.Row(
+        [
+            dbc.Col(dbc.Card(
+                [dbc.CardHeader("Ônibus vazios", style={"font-size": "18px"}, className="py-1 text-center"),
+                dbc.CardBody(
+                    [
+                        html.H5("n/a", id="qtd-vazio", className="card-title text-center py-0 mb-1", style={"font-size": "42px"}),
+                        html.P("Atualizado: n/a", id="atualizacao-vazio", className="card-text text-center"),
+                    ],
+                className="py-2")],
+                color="success", inverse=True)),
+            dbc.Col(dbc.Card(
+                [dbc.CardHeader("Ônibus normais", style={"font-size": "18px"}, className="py-1 text-center"),
+                dbc.CardBody(
+                    [
+                        html.H5("n/a", id="qtd-normal", className="card-title text-center py-0 mb-1", style={"font-size": "42px"}),
+                        html.P("Atualizado: n/a", id="atualizacao-normal", className="card-text text-center"),
+                    ],
+                className="py-2")],
+                color="primary", inverse=True)),
+            dbc.Col(dbc.Card(
+                [dbc.CardHeader("Ônibus cheios", style={"font-size": "18px"}, className="py-1 text-center"),
+                dbc.CardBody(
+                    [
+                        html.H5("n/a", id="qtd-cheio", className="card-title text-center py-0 mb-1", style={"font-size": "42px"}),
+                        html.P("Atualizado: n/a", id="atualizacao-cheio", className="card-text text-center"),
+                    ],
+                className="py-2")],
+                color="danger", inverse=True)),
+        ],
+        className="mb-4"
+    ),
+    dcc.Interval(
+        id='cards-lotacao-update',
+        interval=10000, # in milliseconds
+        n_intervals=0
+    )
+])
+
+plot_tempo_climatempo = DjangoDash('ClimaTemp', add_bootstrap_links=True)
 plot_tempo_climatempo.layout = html.Div([
-    dcc.Graph(id='tempo_climaTemp'),
+    daq.Thermometer(
+        id='tempo_climaTemp',
+        min=0,
+        max=45,
+        value=0,
+        height=175,
+        color="#c0c0c0",
+        showCurrentValue=True,
+        units="°C" 
+    ),
     dcc.Interval(
         id='temp-climatempo-update',
         interval=9000000,
         n_intervals=0
     )
-#     daq.Thermometer(
-#     id='tempo_climaTemp',
-#     min=95,
-#     max=105,
-#     value=100,
-#     showCurrentValue=True,
-#     units="C"
-# ),
-#     dcc.Interval(
-#         id='temp-climatempo-update',
-#         interval=9000000,
-#         n_intervals=0
-#     )
 ])
-
 
 @plot_direto_dos_trens.callback(
     dash.dependencies.Output('situacao-trens-metros', 'figure'),
@@ -120,7 +158,8 @@ def sp_trans_localizacao(data):
     return ret
 
 @plot_tempo_climatempo.callback(
-    dash.dependencies.Output('tempo_climaTemp', 'figure'),
+    [dash.dependencies.Output('tempo_climaTemp', 'value'),
+    dash.dependencies.Output('tempo_climaTemp', 'color')],
     [dash.dependencies.Input('temp-climatempo-update', 'n_intervals')])
 def update_climatempo(self):
     idCity_STAndre = 3667
@@ -128,11 +167,43 @@ def update_climatempo(self):
     url = "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
     urlplus = str(idCity_STAndre) + "/current?token=" + token
     plot_info = apis.climatempo_tempo(url,urlplus)
-    data = go.Indicator(
-    mode = "gauge+number",
-    value = plot_info["data"]["temperature"],
-    domain = {'x': [0, 1], 'y': [0, 1]})
-    # title = {'text': "Temperatura"})
-    ret = {'data': [data],
-           'layout': go.Layout(margin=dict(t=0, b=0, l=0, r=0), height=250,uirevision= True)}
-    return ret
+    temp = plot_info["data"]["temperature"]
+    color=""
+    if temp <= 15:
+        color = "#007BFF"
+    elif temp > 15 and temp < 25:
+        color = "#ffc107"
+    else:
+        color = "#DC3545"
+    return temp, color
+
+@plot_cards_lotacao.callback(
+            [dash.dependencies.Output('qtd-vazio', 'children'),
+            dash.dependencies.Output('qtd-normal', 'children'),
+            dash.dependencies.Output('qtd-cheio', 'children'),
+            dash.dependencies.Output('atualizacao-vazio', 'children'),
+            dash.dependencies.Output('atualizacao-normal', 'children'),
+            dash.dependencies.Output('atualizacao-cheio', 'children'),],
+            [dash.dependencies.Input('cards-lotacao-update', 'n_intervals')])
+def update_cards_lotacao(self):
+    vazio = apis.cards_lotacao(
+        'http://localhost:8000/api',
+        '/onibus-lotacao',
+        {"lotacao":"vazio"}
+    )
+    normal = apis.cards_lotacao(
+        'http://localhost:8000/api',
+        '/onibus-lotacao',
+        {"lotacao":"normal"}
+    )
+    cheio = apis.cards_lotacao(
+        'http://localhost:8000/api',
+        '/onibus-lotacao',
+        {"lotacao":"cheio"}
+    )
+    now = datetime.datetime.now()
+    horario = "Atualizado: " + now.strftime("%H:%M:%S")
+    return [
+        html.Span(len(vazio)), html.Span(len(normal)), html.Span(len(cheio)), html.Span(horario), html.Span(horario), html.Span(horario)
+    ]
+
