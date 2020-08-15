@@ -6,9 +6,17 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 from django_plotly_dash import DjangoDash
 import datetime
-
+from dotenv import load_dotenv
+import os
+from os.path import join, dirname
 import plotly.io as pio
 pio.renderers.default = "svg"
+
+# Create .env file path.
+dotenv_path = join(dirname(__file__), '../.ENV')
+
+# Load file from the path.
+load_dotenv(dotenv_path)
 
 import plotly.graph_objects as go
 from django.shortcuts import render
@@ -86,7 +94,7 @@ plot_tempo_climatempo.layout = html.Div([
         height=175,
         color="#c0c0c0",
         showCurrentValue=True,
-        units="°C" 
+        units="°C"
     ),
     dcc.Interval(
         id='temp-climatempo-update',
@@ -122,11 +130,11 @@ def update_direto_dos_trens(self):
     dash.dependencies.Output('loc-sptrans', 'figure'),
     [dash.dependencies.Input('loc-sptrans-update', 'n_intervals')])
 def sp_trans_localizacao(data):
-    mapbox_access_token = "pk.eyJ1IjoibHVjYWV6ZWxsbmVyIiwiYSI6ImNrYjRiNm12ZDBodHkyc284M3FteHRyNGgifQ.73HUnz3EYhNZsilwkR4OdQ"
+    mapbox_access_token = os.getenv('MAPBOXAPI')
     plot_info = apis.sp_trans_localizacao(
         'http://api.olhovivo.sptrans.com.br/v2.1',
         '/Posicao',
-        apiPreUrl='/Login/Autenticar?token=d56f9613a83a7233521ae5413765d15dae0b499967f2a12384ce2f7cd2fe62a9'
+        apiPreUrl='/Login/Autenticar?token='+os.getenv('OLHOVIVO')
     )
     data = go.Scattermapbox(
         lat=plot_info['lat_list'],
@@ -137,11 +145,11 @@ def sp_trans_localizacao(data):
             size=12
         )
     )
-    
+
     ret = {'data': [data],
             'layout': go.Layout(hovermode='closest',
                                 hoverdistance=1,
-                                
+
                                 mapbox=dict(
                                     accesstoken=mapbox_access_token,
                                     bearing=0,
@@ -163,7 +171,7 @@ def sp_trans_localizacao(data):
     [dash.dependencies.Input('temp-climatempo-update', 'n_intervals')])
 def update_climatempo(self):
     idCity_STAndre = 3667
-    token = "cd640a1a7fd7767e9afc268efcb06882"
+    token = os.getenv('CLIMATEMPO')
     url = "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
     urlplus = str(idCity_STAndre) + "/current?token=" + token
     plot_info = apis.climatempo_tempo(url,urlplus)
@@ -206,4 +214,3 @@ def update_cards_lotacao(self):
     return [
         html.Span(len(vazio)), html.Span(len(normal)), html.Span(len(cheio)), html.Span(horario), html.Span(horario), html.Span(horario)
     ]
-
