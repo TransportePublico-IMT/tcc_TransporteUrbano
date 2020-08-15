@@ -11,11 +11,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from os.path import join, dirname
+from os.path import dirname, join
+
 from dotenv import load_dotenv
 
 # Create .env file path.
-dotenv_path = join(dirname(__file__), '../.ENV')
+dotenv_path = join(dirname(__file__), "../.ENV")
 
 # Load file from the path.
 load_dotenv(dotenv_path)
@@ -28,12 +29,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
@@ -61,7 +62,7 @@ INSTALLED_APPS = [
     "climatempo",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
     "bootstrap4",
-    "django_celery_results"
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -73,9 +74,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django_plotly_dash.middleware.BaseMiddleware",
-    'django_plotly_dash.middleware.ExternalRedirectionMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-
+    "django_plotly_dash.middleware.ExternalRedirectionMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "busdash.urls"
@@ -123,32 +123,25 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 STATICFILES_FINDERS = [
-
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-
-    'django_plotly_dash.finders.DashAssetFinder',
-    'django_plotly_dash.finders.DashComponentFinder',
-    'django_plotly_dash.finders.DashAppDirectoryFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "django_plotly_dash.finders.DashAssetFinder",
+    "django_plotly_dash.finders.DashComponentFinder",
+    "django_plotly_dash.finders.DashAppDirectoryFinder",
 ]
 
 PLOTLY_COMPONENTS = [
-
     # Common components
-    'dash_core_components',
-    'dash_html_components',
-    'dash_renderer',
-
+    "dash_core_components",
+    "dash_html_components",
+    "dash_renderer",
     # django-plotly-dash components
-    'dpd_components',
+    "dpd_components",
     # static support if serving local assets
-    'dpd_static_support',
-
+    "dpd_static_support",
     # Other components, as needed
-    'dash_bootstrap_components',
+    "dash_bootstrap_components",
 ]
-
-
 
 
 # Internationalization
@@ -173,9 +166,9 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "busdash/static")]
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'America/Sao_Paulo'
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "America/Sao_Paulo"
