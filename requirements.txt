@@ -4,6 +4,7 @@ appdirs==1.4.4
 asgiref==3.2.7
 astroid==2.4.1
 beautifulsoup4==4.9.1
+black==19.10b0
 billiard==3.6.3.0
 Brotli==1.0.7
 celery==4.4.7
