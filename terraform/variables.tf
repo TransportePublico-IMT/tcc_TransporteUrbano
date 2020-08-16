@@ -42,3 +42,9 @@ variable "ecs_cluster_name" {
   description = "Name of the ECS cluster"
   default     = "production"
 }
+
+# logs
+
+variable "log_retention_in_days" {
+  default = 30
+}
