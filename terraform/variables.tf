@@ -69,3 +69,18 @@ variable "app_count" {
   description = "Number of Docker containers to run"
   default     = 2
 }
+
+# auto scaling
+
+variable "autoscale_min" {
+  description = "Minimum autoscale (number of EC2)"
+  default     = "1"
+}
+variable "autoscale_max" {
+  description = "Maximum autoscale (number of EC2)"
+  default     = "10"
+}
+variable "autoscale_desired" {
+  description = "Desired autoscale (number of EC2)"
+  default     = "4"
+}
