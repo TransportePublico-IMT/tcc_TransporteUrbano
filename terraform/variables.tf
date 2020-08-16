@@ -35,14 +35,6 @@ variable "health_check_path" {
   default     = "/ping/"
 }
 
-
-# ecs
-
-variable "ecs_cluster_name" {
-  description = "Name of the ECS cluster"
-  default     = "production"
-}
-
 # logs
 
 variable "log_retention_in_days" {
@@ -52,4 +44,28 @@ variable "log_retention_in_days" {
 variable "ssh_pubkey_file" {
   description = "Path to an SSH public key"
   default     = "~/.ssh/id_rsa.pub"
+}
+
+# ecs
+
+variable "ecs_cluster_name" {
+  description = "Name of the ECS cluster"
+  default     = "production"
+}
+variable "amis" {
+  description = "Which AMI to spawn."
+  default = {
+    us-east-2 = "ami-0667a9cc6a93f50fe"
+  }
+}
+variable "instance_type" {
+  default = "t2.micro"
+}
+variable "docker_image_url_django" {
+  description = "Docker image to run in the ECS cluster"
+  default     = "476675727836.dkr.ecr.us-east-2.amazonaws.com/django-app:latest"
+}
+variable "app_count" {
+  description = "Number of Docker containers to run"
+  default     = 2
 }
