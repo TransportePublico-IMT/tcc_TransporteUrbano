@@ -29,14 +29,14 @@ resource "aws_security_group" "load-balancer" {
 # Security group
 resource "aws_security_group" "ecs" {
   name        = "ecs_security_group"
-  description = "Allow Inbound Access"
+  description = "Allows inbound access from the ALB only"
   vpc_id      = aws_vpc.production-vpc.id
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [aws_security_group.load-balancer.id]
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.load-balancer.id]
   }
 
   ingress {

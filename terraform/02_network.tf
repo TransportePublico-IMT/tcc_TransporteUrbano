@@ -5,7 +5,7 @@ resource "aws_vpc" "production-vpc" {
   enable_dns_hostnames = true
 }
 
-# Public Subnets
+# Public subnets
 resource "aws_subnet" "public-subnet-1" {
   cidr_block        = var.public_subnet_1_cidr
   vpc_id            = aws_vpc.production-vpc.id
@@ -29,7 +29,7 @@ resource "aws_subnet" "private-subnet-2" {
   availability_zone = var.availability_zones[1]
 }
 
-# Route Tables for the subnets
+# Route tables for the subnets
 resource "aws_route_table" "public-route-table" {
   vpc_id = aws_vpc.production-vpc.id
 }
@@ -37,7 +37,7 @@ resource "aws_route_table" "private-route-table" {
   vpc_id = aws_vpc.production-vpc.id
 }
 
-# Route tables association with subnets
+# Associate the newly created route tables to the subnets
 resource "aws_route_table_association" "public-route-1-association" {
   route_table_id = aws_route_table.public-route-table.id
   subnet_id      = aws_subnet.public-subnet-1.id
@@ -48,7 +48,7 @@ resource "aws_route_table_association" "public-route-2-association" {
 }
 resource "aws_route_table_association" "private-route-1-association" {
   route_table_id = aws_route_table.private-route-table.id
-  subnet_id      = aws_subnet.public-subnet-1.id
+  subnet_id      = aws_subnet.private-subnet-1.id
 }
 resource "aws_route_table_association" "private-route-2-association" {
   route_table_id = aws_route_table.private-route-table.id
@@ -62,7 +62,7 @@ resource "aws_eip" "elastic-ip-for-nat-gw" {
   depends_on                = [aws_internet_gateway.production-igw]
 }
 
-# NAT Gateway
+# NAT gateway
 resource "aws_nat_gateway" "nat-gw" {
   allocation_id = aws_eip.elastic-ip-for-nat-gw.id
   subnet_id     = aws_subnet.public-subnet-1.id
@@ -71,17 +71,17 @@ resource "aws_nat_gateway" "nat-gw" {
 resource "aws_route" "nat-gw-route" {
   route_table_id         = aws_route_table.private-route-table.id
   nat_gateway_id         = aws_nat_gateway.nat-gw.id
-  destination_cidr_block = "0.0.0.0/16"
+  destination_cidr_block = "0.0.0.0/0"
 }
 
-# Internet Gateway for public subnet
+# Internet Gateway for the public subnet
 resource "aws_internet_gateway" "production-igw" {
   vpc_id = aws_vpc.production-vpc.id
 }
 
-#Public subnet traffic
+# Route the public subnet traffic through the Internet Gateway
 resource "aws_route" "public-internet-igw-route" {
   route_table_id         = aws_route_table.public-route-table.id
   gateway_id             = aws_internet_gateway.production-igw.id
-  destination_cidr_block = "0.0.0.0/16"
+  destination_cidr_block = "0.0.0.0/0"
 }
