@@ -1,4 +1,4 @@
-# core
+# core,
 variable "region" {
   description = "Regiao da AWS"
   default     = "us-east-2"
