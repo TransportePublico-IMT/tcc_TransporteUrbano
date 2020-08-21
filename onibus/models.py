@@ -4,7 +4,7 @@ from linha.models import Linha
 class OnibusLotacao(models.Model):
     id_onibus = models.IntegerField()
     id_linha = models.ForeignKey(Linha, to_field="id_linha", db_column="id_linha", on_delete=models.SET_NULL, null=True)
-    lotacao = models.DateTimeField()
+    lotacao = models.CharField(max_length=20)
     latitude = models.DecimalField(max_digits=17, decimal_places=15)
     longitude = models.DecimalField(max_digits=17, decimal_places=15)
     data_inclusao = models.DateTimeField(auto_now_add=True)

@@ -19,22 +19,22 @@ class OnibusLotacaoViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             img_path = request.data['img']
-            prefixo = request.data['prefixo']
-            cod_linha = request.data['cod_linha']
+            id_onibus = request.data['id_onibus']
+            id_linha = Linha.objects.get(id_linha=request.data['id_linha'])
             latitude = request.data['latitude']
             longitude = request.data['longitude']
             #processar a imagem
             estado = processar_img(img_path)
             onibus_lotacao = OnibusLotacao(
-                prefixo = prefixo,
-                cod_linha = cod_linha,
+                id_onibus = id_onibus,
+                id_linha = id_linha,
                 lotacao = estado,
                 latitude = latitude,
                 longitude = longitude
             )
             onibus_lotacao.save()
             return Response({'status': 'sucesso'})
-        except:
+        except Exception as e:
             return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
 
 class OnibusPosicaoViewSet(ModelViewSet):
@@ -52,6 +52,7 @@ class OnibusPosicaoViewSet(ModelViewSet):
                     latitude = i["latitude"],
                     longitude = i["longitude"],
                     frota = i["frota"],
+                    sentido = i["sentido"],
                     id_linha = Linha.objects.get(id_linha=i["id_linha"])
                 )
                 lista_onibus_posicao.append(onibus)
@@ -59,5 +60,3 @@ class OnibusPosicaoViewSet(ModelViewSet):
             return Response({'status': 'sucesso'})
         except Exception as e:
             return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
-
-   
