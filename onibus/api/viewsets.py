@@ -1,3 +1,4 @@
+from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from onibus.models import OnibusLotacao, OnibusPosicao
@@ -37,6 +38,41 @@ class OnibusLotacaoViewSet(ModelViewSet):
         except Exception as e:
             return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
 
+    @action(methods=['GET'], detail=False)
+    def ultimos(self, request):
+        intervalo = self.request.query_params.get('intervalo', None)
+        lotacao = self.request.query_params.get('lotacao', None)
+        query_add = ""
+        if lotacao:
+            query_add = f"AND lotacao = '{lotacao}'"
+        if intervalo:
+            queryset = OnibusLotacao.objects.raw(f'''SELECT *
+                                                    FROM onibus_onibuslotacao
+                                                    WHERE data_inclusao IN (
+                                                        SELECT MAX(data_inclusao)
+                                                        FROM onibus_onibuslotacao
+                                                        WHERE data_inclusao >= DATETIME(DATETIME('now'), '-{intervalo} hours')
+                                                        GROUP BY id_onibus
+                                                    ){query_add};''')
+            
+            serializer = OnibusLotacaoSerializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            # queryset = OnibusLotacao.objects.order_by('-data_inclusao').distinct('id_onibus')
+            queryset = OnibusLotacao.objects.raw(f'''SELECT *
+                                                    FROM onibus_onibuslotacao
+                                                    WHERE data_inclusao IN (
+                                                        SELECT MAX(data_inclusao)
+                                                        FROM onibus_onibuslotacao
+                                                        GROUP BY id_onibus
+                                                    ){query_add};''')
+
+            serializer = OnibusLotacaoSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        
+
+
 class OnibusPosicaoViewSet(ModelViewSet):
     serializer_class = OnibusPosicaoSerializer
     queryset = OnibusPosicao.objects.all()
@@ -52,7 +88,6 @@ class OnibusPosicaoViewSet(ModelViewSet):
                     latitude = i["latitude"],
                     longitude = i["longitude"],
                     frota = i["frota"],
-                    sentido = i["sentido"],
                     id_linha = Linha.objects.get(id_linha=i["id_linha"])
                 )
                 lista_onibus_posicao.append(onibus)

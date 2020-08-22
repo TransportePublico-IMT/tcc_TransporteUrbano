@@ -11,17 +11,16 @@ import os
 from os.path import join, dirname
 import plotly.io as pio
 pio.renderers.default = "svg"
-
-# Create .env file path.
-dotenv_path = join(dirname(__file__), '../.ENV')
-
-# Load file from the path.
-load_dotenv(dotenv_path)
-
 import plotly.graph_objects as go
 from django.shortcuts import render
 from plotly.offline import plot
 from . import apis
+
+
+# Create .env file path.
+dotenv_path = join(dirname(__file__), '../.ENV')
+# Load file from the path.
+load_dotenv(dotenv_path)
 
 plot_direto_dos_trens = DjangoDash('DiretoDosTrens')
 plot_direto_dos_trens.layout = html.Div([
@@ -108,8 +107,8 @@ plot_tempo_climatempo.layout = html.Div([
     [dash.dependencies.Input('direto-dos-trens-update', 'n_intervals')])
 def update_direto_dos_trens(self):
     plot_info = apis.direto_dos_trens(
-        'https://www.diretodostrens.com.br/api',
-        '/status'
+        'http://localhost:8000/api',
+        '/trens/ultimos'
     )
     data = go.Sunburst(
         labels=plot_info['label_list'],
@@ -170,12 +169,10 @@ def sp_trans_localizacao(data):
     dash.dependencies.Output('tempo_climaTemp', 'color')],
     [dash.dependencies.Input('temp-climatempo-update', 'n_intervals')])
 def update_climatempo(self):
-    idCity_STAndre = 3667
-    token = os.getenv('CLIMATEMPO')
-    url = "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
-    urlplus = str(idCity_STAndre) + "/current?token=" + token
+    url = "http://localhost:8000/api"
+    urlplus = "/climatempo/ultimo/"
     plot_info = apis.climatempo_tempo(url,urlplus)
-    temp = plot_info["data"]["temperature"]
+    temp = float(plot_info["temperatura"])
     color=""
     if temp <= 15:
         color = "#007BFF"
@@ -196,18 +193,27 @@ def update_climatempo(self):
 def update_cards_lotacao(self):
     vazio = apis.cards_lotacao(
         'http://localhost:8000/api',
-        '/onibus-lotacao',
-        {"lotacao":"vazio"}
+        '/onibus-lotacao/ultimos/',
+        {
+            "lotacao":"vazio",
+            #"intervalo": "1",
+        }
     )
     normal = apis.cards_lotacao(
         'http://localhost:8000/api',
-        '/onibus-lotacao',
-        {"lotacao":"normal"}
+        '/onibus-lotacao/ultimos/',
+        {
+            "lotacao":"normal",
+            #"intervalo": "1",
+        }
     )
     cheio = apis.cards_lotacao(
         'http://localhost:8000/api',
-        '/onibus-lotacao',
-        {"lotacao":"cheio"}
+        '/onibus-lotacao/ultimos/',
+        {
+            "lotacao":"cheio",
+            #"intervalo": "1",
+        }
     )
     now = datetime.datetime.now()
     horario = "Atualizado: " + now.strftime("%H:%M:%S")

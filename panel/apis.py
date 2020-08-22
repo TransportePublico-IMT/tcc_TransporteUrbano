@@ -40,21 +40,21 @@ def direto_dos_trens(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlM
         if linha["situacao"] in situacaoDiretoDosTrens:
             if "descricao" in linha:
                 situacaoDiretoDosTrens[linha["situacao"]].append(
-                    {"linha": linha["codigo"], "descricao": linha["descricao"]}
+                    {"linha": linha["id_linha"], "descricao": linha["descricao"]}
                 )
             else:
                 situacaoDiretoDosTrens[linha["situacao"]].append(
-                    {"linha": linha["codigo"]}
+                    {"linha": linha["id_linha"]}
                 )
         else:
             situacaoDiretoDosTrens[linha["situacao"]] = []
             if "descricao" in linha:
                 situacaoDiretoDosTrens[linha["situacao"]].append(
-                    {"linha": linha["codigo"], "descricao": linha["descricao"]}
+                    {"linha": linha["id_linha"], "descricao": linha["descricao"]}
                 )
             else:
                 situacaoDiretoDosTrens[linha["situacao"]].append(
-                    {"linha": linha["codigo"]}
+                    {"linha": linha["id_linha"]}
                 )
     # Criação das listas com base no dicionario para popular o gráfico
     label_list = ["Situação"]
@@ -86,7 +86,7 @@ def direto_dos_trens(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlM
                 color_list.append("#dc3545")
             else:
                 color_list.append("#ffc107")
-            if "descricao" in linha:
+            if linha["descricao"] != None:
                 counter = 0
                 descricao = ""
                 # Isso serve para quebrar as linhas da descrição colocando <br>, senão ficava gigante no hover

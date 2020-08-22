@@ -2,6 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from trem.models import Trem
 from .serializers import TremSerializer
+from rest_framework.decorators import action
 
 class TremViewSet(ModelViewSet):
     serializer_class = TremSerializer
@@ -23,3 +24,16 @@ class TremViewSet(ModelViewSet):
             return Response({'status': 'sucesso'})
         except Exception as e:
             return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
+
+    @action(methods=['GET'], detail=False)
+    def ultimos(self, request):
+        #queryset = OnibusLotacao.objects.order_by('-data_inclusao').distinct('id_onibus')
+        queryset = Trem.objects.raw(f'''SELECT *
+                                        FROM trem_trem
+                                        WHERE ultima_atualizacao IN (
+                                            SELECT MAX(ultima_atualizacao)
+                                            FROM trem_trem
+                                            GROUP BY id_linha
+                                        );''')
+        serializer = TremSerializer(queryset, many=True)
+        return Response(serializer.data)

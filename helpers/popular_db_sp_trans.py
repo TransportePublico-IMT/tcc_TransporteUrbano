@@ -67,7 +67,7 @@ def popular_onibus():
                         apiPreUrl='/Login/Autenticar?token=d56f9613a83a7233521ae5413765d15dae0b499967f2a12384ce2f7cd2fe62a9')
     list_onibus = []
     for i in data["l"]:
-        for y in i["vs"]: 
+        for y in i["vs"]:
             onibus = {
                 'id_onibus': y["p"],
                 'onibus_deficiente': y["a"],
@@ -75,7 +75,7 @@ def popular_onibus():
                 'latitude': y["py"],
                 'longitude': y["px"],
                 'id_linha': i["cl"],
-                'frota': i["sl"]
+                'frota': i["qv"]
             }
             list_onibus.append(onibus)
     

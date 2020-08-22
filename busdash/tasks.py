@@ -33,7 +33,7 @@ def save_onibus_posicao():
         raise TaskFailure(status)
     return status
 
-@periodic_task(run_every=(crontab(minute='*/1')), name="save_trens_metros", ignore_result=True)
+@periodic_task(run_every=(crontab(minute='*/10')), name="save_trens_metros", ignore_result=True)
 def save_trens_metros():
     status_json = popular_db_apis.popular_trens_metros()
     status = status_json['status']
@@ -41,7 +41,7 @@ def save_trens_metros():
         raise TaskFailure(status)
     return status
 
-@periodic_task(run_every=(crontab(minute='*/1')), name="save_clima_tempo", ignore_result=True)
+@periodic_task(run_every=(crontab(minute='*/5')), name="save_clima_tempo", ignore_result=True)
 def save_clima_tempo():
     status_json = popular_db_apis.popular_climatempo()
     status = status_json['status']

@@ -3,7 +3,14 @@ import urllib
 from panel.apis import api_get_data
 from trem.models import Trem
 import requests
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
 
+# Create .env file path.
+dotenv_path = join(dirname(__file__), '../.ENV')
+# Load file from the path.
+load_dotenv(dotenv_path)
 
 def popular_trens_metros():
     data = api_get_data(
@@ -38,7 +45,7 @@ def popular_trens_metros():
 
 def popular_climatempo():
     idCity_STAndre = 3667
-    token = "cd640a1a7fd7767e9afc268efcb06882"
+    token = os.getenv('CLIMATEMPO')
     apiBaseUrl = "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
     apiUrl = str(idCity_STAndre) + "/current?token=" + token
     data = api_get_data(apiBaseUrl, apiUrl)

@@ -8,6 +8,7 @@ class LinhaViewSet(ModelViewSet):
     queryset = Linha.objects.all()
 
     def create(self, request, *args, **kwargs):
+        i=""
         try:
             for i in request.data['l']:
                 Linha.objects.get_or_create(
@@ -19,4 +20,4 @@ class LinhaViewSet(ModelViewSet):
                 )
             return Response({'status': 'sucesso'})
         except Exception as e:
-            return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
+            return Response({'status': f"erro: {type(e).__name__}: {str(e)} --- Esta tendo inserir: {i}"})

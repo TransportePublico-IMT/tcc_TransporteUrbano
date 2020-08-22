@@ -6,7 +6,7 @@ class ClimaTempo(models.Model):
     direcao_vento = models.CharField(max_length=10)
     velocidade_vento = models.DecimalField(max_digits=5, decimal_places=2)
     umidade = models.DecimalField(max_digits=5, decimal_places=2)
-    condicao = models.CharField(max_length=500)
+    condicao = models.CharField(max_length=500, null=True)
     pressao = models.DecimalField(max_digits=10, decimal_places=2)
     sensacao = models.DecimalField(max_digits=5, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
