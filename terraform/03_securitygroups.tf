@@ -53,3 +53,25 @@ resource "aws_security_group" "ecs" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "rds" {
+  name        = "rds-security-group"
+  description = "Access only from ECS"
+  vpc_id      = aws_vpc.production-vpc.id
+
+  ingress {
+    from_port   = "5432"
+    to_port     = "5432"
+    protocol    = "tcp"
+    cidr_blocks = [aws_security_group.ecs.id]
+
+  }
+
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
