@@ -147,4 +147,7 @@ cython_debug/
 
 # Terraform
 */.terraform
-*.tfstate
+*.tfstate*
+
+.vscode/
+*vcscode*
