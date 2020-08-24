@@ -17,6 +17,7 @@ data "template_file" "app" {
 
   vars = {
     docker_image_url_django = var.docker_image_url_django
+    docker_image_url_nginx  = var.docker_image_url_nginx
     region                  = var.region
     rds_db_name             = var.rds_db_name
     rds_username            = var.rds_username
@@ -41,7 +42,7 @@ resource "aws_ecs_service" "production" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.default-target-group.arn
-    container_name   = "django-app"
-    container_port   = 8000
+    container_name   = "nginx"
+    container_port   = 80
   }
 }

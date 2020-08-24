@@ -16,13 +16,16 @@ def get_current_task_definition(client, cluster, service):
 def deploy(cluster, service):
     client = boto3.client("ecs")
 
+    container_definitions = []
     response = get_current_task_definition(client, cluster, service)
-    container_definition = response["taskDefinition"]["containerDefinitions"][0].copy()
+    for container_definition in response["taskDefinition"]["containerDefinitions"]:
+        new_def = container_definition.copy()
+        container_definitions.append(new_def)
 
     response = client.register_task_definition(
         family=response["taskDefinition"]["family"],
         volumes=response["taskDefinition"]["volumes"],
-        containerDefinitions=[container_definition],
+        containerDefinitions=container_definitions,
     )
     new_task_arn = response["taskDefinition"]["taskDefinitionArn"]
 

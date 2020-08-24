@@ -70,6 +70,11 @@ variable "app_count" {
   default     = 2
 }
 
+variable "docker_image_url_nginx" {
+  description = "Docker image to run in the ECS cluster"
+  default     = "476675727836.dkr.ecr.us-east-2.amazonaws.com/nginx:latest"
+}
+
 # auto scaling
 
 variable "autoscale_min" {
