@@ -36,6 +36,12 @@
         "value": "5432"
       }
     ],
+    "mountPoints": [
+      {
+        "containerPath": "/usr/src/app/staticfiles/",
+        "sourceVolume": "static_volume"
+      }
+    ],
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
@@ -57,6 +63,12 @@
         "containerPort": 80,
         "hostPort": 0,
         "protocol": "tcp"
+      }
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/usr/src/app/staticfiles/",
+        "sourceVolume": "static_volume"
       }
     ],
     "logConfiguration": {
