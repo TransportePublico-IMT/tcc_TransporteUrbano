@@ -106,14 +106,37 @@ def sp_trans_localizacao(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPre
     data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
     lon_list = []
     lat_list = []
-    symbol_list = []
+    color_list = []
+    hover_text_list = []
+    text_list = []
+    size_list = []
     for linha in data["l"]:
         for bus in linha["vs"]:
             lat_list.append(bus["py"])
             lon_list.append(bus["px"])
-            symbol_list.append("bus")
+            hover_text_list.append(f"PREFIXO: {str(bus['p'])}<br>LETREIRO: {str(linha['c'])}<br>CÓDIGO LINHA: {str(linha['cl'])}")
+            text_list.append("")
+            color_list.append("#212529")
+            size_list.append(10)
     
-    ret = {'lon_list': lon_list, 'lat_list': lat_list, 'symbol_list': symbol_list}
+    ret = {'lon_list': lon_list, 'lat_list': lat_list, 'color_list': color_list, 'hover_text_list': hover_text_list, 'text_list': text_list, 'size_list': size_list}
+    return ret
+
+def paradas(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
+    data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
+    lon_list = []
+    lat_list = []
+    color_list = []
+    hover_text_list = []
+    size_list = []
+    for parada in data:
+        lat_list.append(parada["latitude"])
+        lon_list.append(parada["longitude"])
+        hover_text_list.append(parada["nome"])
+        color_list.append("#DC3545")
+        size_list.append(14)
+
+    ret = {'lon_list': lon_list, 'lat_list': lat_list, 'color_list': color_list, 'hover_text_list': hover_text_list, 'size_list': size_list}
     return ret
 
 def climatempo_tempo(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):

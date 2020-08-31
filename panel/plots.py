@@ -90,11 +90,18 @@ plot_tempo_climatempo.layout = html.Div([
         min=0,
         max=45,
         value=0,
-        height=175,
+        height=140,
         color="#c0c0c0",
         showCurrentValue=True,
-        units="°C"
+        units=""
     ),
+    html.Div([
+        html.Span(
+            "CARREGANDO...",
+            id='condicao_tempo',
+            style={"font-size": "18px", "font-weight":"500", "display": "block", "text-align": "center", "color": "#6c757d"}
+        )
+    ]),
     dcc.Interval(
         id='temp-climatempo-update',
         interval=9000000,
@@ -130,18 +137,26 @@ def update_direto_dos_trens(self):
     [dash.dependencies.Input('loc-sptrans-update', 'n_intervals')])
 def sp_trans_localizacao(data):
     mapbox_access_token = os.getenv('MAPBOXAPI')
-    plot_info = apis.sp_trans_localizacao(
+    plot_info_onibus = apis.sp_trans_localizacao(
         'http://api.olhovivo.sptrans.com.br/v2.1',
         '/Posicao',
         apiPreUrl='/Login/Autenticar?token='+os.getenv('OLHOVIVO')
     )
+    plot_info_paradas = apis.paradas(
+        'http://localhost:8000',
+        '/api/paradas'
+    )
     data = go.Scattermapbox(
-        lat=plot_info['lat_list'],
-        lon=plot_info['lon_list'],
-        mode='markers',
+        lat=plot_info_onibus['lat_list'] + plot_info_paradas['lat_list'],
+        lon=plot_info_onibus['lon_list'] + plot_info_paradas['lon_list'],
+        hovertext= plot_info_onibus['hover_text_list'] + plot_info_paradas['hover_text_list'],
+        mode='markers+text',
+        textposition='bottom center',
+        text=plot_info_onibus['text_list'] + plot_info_paradas['hover_text_list'],
         marker=go.scattermapbox.Marker(
-            symbol=plot_info['symbol_list'],
-            size=12
+            size=plot_info_onibus['size_list'] + plot_info_paradas['size_list'],
+            color=plot_info_onibus['color_list'] + plot_info_paradas['color_list'],
+            opacity=1
         )
     )
 
@@ -161,12 +176,13 @@ def sp_trans_localizacao(data):
                                     style='light',
                                 ),
                                 uirevision= True,
-                                margin=dict(t=0, b=0, l=0, r=0),height=250)}
+                                margin=dict(t=0, b=0, l=0, r=0),height=440)}
     return ret
 
 @plot_tempo_climatempo.callback(
     [dash.dependencies.Output('tempo_climaTemp', 'value'),
-    dash.dependencies.Output('tempo_climaTemp', 'color')],
+    dash.dependencies.Output('tempo_climaTemp', 'color'),
+    dash.dependencies.Output('condicao_tempo', 'children')],
     [dash.dependencies.Input('temp-climatempo-update', 'n_intervals')])
 def update_climatempo(self):
     url = "http://localhost:8000/api"
@@ -174,13 +190,14 @@ def update_climatempo(self):
     plot_info = apis.climatempo_tempo(url,urlplus)
     temp = float(plot_info["temperatura"])
     color=""
+    condicao = plot_info["condicao"].upper()
     if temp <= 15:
         color = "#007BFF"
     elif temp > 15 and temp < 25:
         color = "#ffc107"
     else:
         color = "#DC3545"
-    return temp, color
+    return temp, color, condicao
 
 @plot_cards_lotacao.callback(
             [dash.dependencies.Output('qtd-vazio', 'children'),

@@ -33,9 +33,9 @@
     </div>
     <div class="col-5">
         <div class="card mb-3">
-            <div class="card-header py-1 h6 text-muted"><i class="fas fa-exclamation-circle mr-1"></i>Alertas</div>
-            <div class="card-body p-2" style="height: 150px;" >
-                
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Localização SP-Trans</div>
+            <div class="card-body p-1" style="height: 461px;" >
+                {% plotly_app name="LocSptrans" ratio=0.7 %}
             </div>
         </div>
     </div>
@@ -43,9 +43,9 @@
 <div class="row">
     <div class="col-xl-7" style="height: 270px;">
         <div class="card mb-3">
-            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Localização SP-Trans</div>
-            <div class="card-body p-1" style="height: 270px;" >
-                {% plotly_app name="LocSptrans" ratio=0.45 %}
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-exclamation-circle mr-1"></i>Alertas</div>
+            <div class="card-body p-2" style="height: 150px;" >
+                
             </div>
         </div>
     </div>
@@ -53,13 +53,13 @@
         <div class="card mb-3">
             <div class="card-header py-1 h6 text-muted"><i class="fas fa-train mr-1"></i>Situação Trens e Metrôs</div>
             <div class="card-body p-1" style="height: 270px;" >
-                {% plotly_app name="DiretoDosTrens" ratio=1 %}
+                {% plotly_app name="DiretoDosTrens" ratio=0.7 %}
             </div>
         </div>
     </div>
     <div class="col-xl-2">
         <div class="card mb-3">
-            <div class="card-header py-1 h6 text-muted"><i class="fas fa-thermometer-half mr-1"></i>Temperatura</div>
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-thermometer-half mr-1"></i>Temperatura (°C)</div>
             <div class="card-body p-1" style="height: 270px;">
                 <div class="text-center" id="climatempo">
                     {% plotly_app name="ClimaTemp" ratio=1.1 %}
