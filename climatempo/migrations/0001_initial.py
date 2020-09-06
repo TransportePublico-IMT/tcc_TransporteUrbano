@@ -7,23 +7,33 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='ClimaTempo',
+            name="ClimaTempo",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('id_cidade', models.IntegerField()),
-                ('temperatura', models.DecimalField(decimal_places=2, max_digits=5)),
-                ('direcao_vento', models.CharField(max_length=10)),
-                ('velocidade_vento', models.DecimalField(decimal_places=2, max_digits=5)),
-                ('umidade', models.DecimalField(decimal_places=2, max_digits=5)),
-                ('condicao', models.CharField(max_length=500)),
-                ('pressao', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('sensacao', models.DecimalField(decimal_places=2, max_digits=5)),
-                ('date', models.DateTimeField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("id_cidade", models.IntegerField()),
+                ("temperatura", models.DecimalField(decimal_places=2, max_digits=5)),
+                ("direcao_vento", models.CharField(max_length=10)),
+                (
+                    "velocidade_vento",
+                    models.DecimalField(decimal_places=2, max_digits=5),
+                ),
+                ("umidade", models.DecimalField(decimal_places=2, max_digits=5)),
+                ("condicao", models.CharField(max_length=500)),
+                ("pressao", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("sensacao", models.DecimalField(decimal_places=2, max_digits=5)),
+                ("date", models.DateTimeField()),
             ],
         ),
     ]

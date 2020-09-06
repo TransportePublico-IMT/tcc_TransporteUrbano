@@ -7,19 +7,26 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Trem',
+            name="Trem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('id_linha', models.IntegerField()),
-                ('data_ocorrencia', models.DateTimeField()),
-                ('descricao', models.CharField(max_length=1500, null=True)),
-                ('ultima_atualizacao', models.DateTimeField()),
-                ('situacao', models.CharField(max_length=300)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("id_linha", models.IntegerField()),
+                ("data_ocorrencia", models.DateTimeField()),
+                ("descricao", models.CharField(max_length=1500, null=True)),
+                ("ultima_atualizacao", models.DateTimeField()),
+                ("situacao", models.CharField(max_length=300)),
             ],
         ),
     ]

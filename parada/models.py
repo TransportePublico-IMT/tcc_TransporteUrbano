@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Parada(models.Model):
     id_parada = models.IntegerField()
     nome = models.CharField(max_length=80, blank=True)

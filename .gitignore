@@ -154,3 +154,4 @@ cython_debug/
 */migrations/*
 
 *.zip
+*/migrations

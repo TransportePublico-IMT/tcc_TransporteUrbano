@@ -1,16 +1,20 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
-from onibus.models import OnibusLotacao, OnibusPosicao
-from linha.models import Linha
-from .serializers import OnibusLotacaoSerializer, OnibusPosicaoSerializer
-from helpers.processar_img import processar_img
 import random
+
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+
+from helpers.processar_img import processar_img
+from linha.models import Linha
+from onibus.models import OnibusLotacao, OnibusPosicao
+
+from .serializers import OnibusLotacaoSerializer, OnibusPosicaoSerializer
+
 
 class OnibusLotacaoViewSet(ModelViewSet):
     serializer_class = OnibusLotacaoSerializer
 
     def get_queryset(self):
-        lotacao = self.request.query_params.get('lotacao', None)
+        lotacao = self.request.query_params.get("lotacao", None)
         queryset = OnibusLotacao.objects.all()
         if lotacao:
             queryset = OnibusLotacao.objects.filter(lotacao=lotacao)
@@ -18,24 +22,25 @@ class OnibusLotacaoViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            img_path = request.data['img']
-            prefixo = request.data['prefixo']
-            cod_linha = request.data['cod_linha']
-            latitude = request.data['latitude']
-            longitude = request.data['longitude']
-            #processar a imagem
+            img_path = request.data["img"]
+            prefixo = request.data["prefixo"]
+            cod_linha = request.data["cod_linha"]
+            latitude = request.data["latitude"]
+            longitude = request.data["longitude"]
+            # processar a imagem
             estado = processar_img(img_path)
             onibus_lotacao = OnibusLotacao(
-                prefixo = prefixo,
-                cod_linha = cod_linha,
-                lotacao = estado,
-                latitude = latitude,
-                longitude = longitude
+                prefixo=prefixo,
+                cod_linha=cod_linha,
+                lotacao=estado,
+                latitude=latitude,
+                longitude=longitude,
             )
             onibus_lotacao.save()
-            return Response({'status': 'sucesso'})
-        except:
-            return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
+            return Response({"status": "sucesso"})
+        except Exception as e:
+            return Response({"status": "erro: " + type(e).__name__ + ": " + str(e)})
+
 
 class OnibusPosicaoViewSet(ModelViewSet):
     serializer_class = OnibusPosicaoSerializer
@@ -44,20 +49,20 @@ class OnibusPosicaoViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             lista_onibus_posicao = []
-            for i in request.data['o']:
+            for i in request.data["o"]:
                 onibus = OnibusPosicao(
-                    id_onibus =  i['id_onibus'],
-                    onibus_deficiente = i["onibus_deficiente"],
-                    horario_atualizacao_localizacao = i["horario_atualizacao_localizacao"],
-                    latitude = i["latitude"],
-                    longitude = i["longitude"],
-                    frota = i["frota"],
-                    id_linha = Linha.objects.get(id_linha=i["id_linha"])
+                    id_onibus=i["id_onibus"],
+                    onibus_deficiente=i["onibus_deficiente"],
+                    horario_atualizacao_localizacao=i[
+                        "horario_atualizacao_localizacao"
+                    ],
+                    latitude=i["latitude"],
+                    longitude=i["longitude"],
+                    frota=i["frota"],
+                    id_linha=Linha.objects.get(id_linha=i["id_linha"]),
                 )
                 lista_onibus_posicao.append(onibus)
             OnibusPosicao.objects.bulk_create(lista_onibus_posicao)
-            return Response({'status': 'sucesso'})
+            return Response({"status": "sucesso"})
         except Exception as e:
-            return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
-
-   
+            return Response({"status": "erro: " + type(e).__name__ + ": " + str(e)})

@@ -3,7 +3,10 @@ import urllib
 
 import requests
 
-def api_get_data(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
+
+def api_get_data(
+    apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"
+):
     response = ""
     base_url = apiBaseUrl
     url = apiUrl
@@ -27,7 +30,10 @@ def api_get_data(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMetho
     json_returned = response.json()
     return json_returned
 
-def direto_dos_trens(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
+
+def direto_dos_trens(
+    apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"
+):
     # Chamada da API para pegar dados e criar um dicionario já filtrado
     data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
     situacaoDiretoDosTrens = {}
@@ -99,10 +105,18 @@ def direto_dos_trens(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlM
             else:
                 hovertext_list.append("")
 
-    ret = {'label_list': label_list, 'parent_list': parent_list, 'hovertext_list': hovertext_list, 'color_list': color_list}
+    ret = {
+        "label_list": label_list,
+        "parent_list": parent_list,
+        "hovertext_list": hovertext_list,
+        "color_list": color_list,
+    }
     return ret
 
-def sp_trans_localizacao(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
+
+def sp_trans_localizacao(
+    apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"
+):
     data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
     lon_list = []
     lat_list = []
@@ -112,16 +126,22 @@ def sp_trans_localizacao(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPre
             lat_list.append(bus["py"])
             lon_list.append(bus["px"])
             symbol_list.append("bus")
-    
-    ret = {'lon_list': lon_list, 'lat_list': lat_list, 'symbol_list': symbol_list}
+
+    ret = {"lon_list": lon_list, "lat_list": lat_list, "symbol_list": symbol_list}
     return ret
 
-def climatempo_tempo(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
-    data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)    
+
+def climatempo_tempo(
+    apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"
+):
+    data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
     ret = data
     return ret
 
-def cards_lotacao(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
+
+def cards_lotacao(
+    apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"
+):
     data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
     ret = data
     return ret

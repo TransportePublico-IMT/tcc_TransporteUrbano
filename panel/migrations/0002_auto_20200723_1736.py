@@ -6,14 +6,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('panel', '0001_initial'),
+        ("panel", "0001_initial"),
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='Chart',
-        ),
-        migrations.DeleteModel(
-            name='Dashboard',
-        ),
+        migrations.DeleteModel(name="Chart",),
+        migrations.DeleteModel(name="Dashboard",),
     ]
