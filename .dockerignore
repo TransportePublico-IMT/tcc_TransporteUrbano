@@ -1,0 +1,7 @@
+.git
+.github
+/ENV
+/terraform
+/sptrans__gtfs
+/nginx
+*/__pycache__
