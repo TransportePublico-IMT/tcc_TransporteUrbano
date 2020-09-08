@@ -63,7 +63,7 @@ def save_trens_metros():
 
 
 @periodic_task(
-    run_every=(crontab(minute="*/1")), name="save_clima_tempo", ignore_result=True
+    run_every=(crontab(minute="*/30")), name="save_clima_tempo", ignore_result=True
 )
 def save_clima_tempo():
     status_json = popular_db_apis.popular_climatempo()
