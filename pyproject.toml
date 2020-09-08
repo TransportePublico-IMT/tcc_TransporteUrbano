@@ -12,6 +12,6 @@ exclude = '''
   | buck-out
   | build
   | dist
-  | /deploy
+  | deploy
 )/
 '''
