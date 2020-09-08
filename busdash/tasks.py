@@ -1,5 +1,7 @@
 import time
+from datetime import datetime
 
+from celery import shared_task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 
@@ -69,3 +71,9 @@ def save_clima_tempo():
     if status.startswith("erro"):
         raise TaskFailure(status)
     return status
+
+
+@shared_task
+def display_time(x, y):
+    print("The time is %s :" % str(datetime.now()))
+    return True
