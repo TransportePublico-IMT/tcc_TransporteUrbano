@@ -7,6 +7,7 @@ import plotly.express as px
 from django_plotly_dash import DjangoDash
 import datetime
 from dotenv import load_dotenv
+import pandas as pd
 import os
 from os.path import join, dirname
 import plotly.io as pio
@@ -15,7 +16,6 @@ import plotly.graph_objects as go
 from django.shortcuts import render
 from plotly.offline import plot
 from . import apis
-
 
 # Create .env file path.
 dotenv_path = join(dirname(__file__), '../.ENV')
@@ -32,12 +32,26 @@ plot_direto_dos_trens.layout = html.Div([
     )
 ])
 
+plot_onibus_historico = DjangoDash('HistoricoOnibus', add_bootstrap_links=True)
+plot_onibus_historico.layout = html.Div([
+    html.Span(
+        "QUANTIDADE DE ÔNIBUS QUE CIRCULARAM - ÚLTIMOS 7 DIAS",
+        style={"font-size": "18px", "font-weight":"500", "display": "block", "text-align": "center", "color": "#6c757d"}
+    ),
+    dcc.Graph(id='historico-onibus'),
+    dcc.Interval(
+        id='historico-onibus-update',
+        interval=20000,
+        n_intervals=0
+    )
+])
+
 plot_localizacao_sptrans = DjangoDash('LocSptrans')
 plot_localizacao_sptrans.layout = html.Div([
     dcc.Graph(id='loc-sptrans'),
     dcc.Interval(
         id='loc-sptrans-update',
-        interval=5000,
+        interval=60000,
         n_intervals=0
     )
 ])
@@ -109,6 +123,37 @@ plot_tempo_climatempo.layout = html.Div([
     )
 ])
 
+plot_onibus_agora = DjangoDash('OnibusAgora', add_bootstrap_links=True)
+plot_onibus_agora.layout = html.Div([
+    html.H3(
+        "Tempo Real",
+        style={"font-size": "18px", "font-weight":"500", "display": "block", "text-align": "center", "color": "#6c757d", "text-transform": "uppercase"}
+    ),
+    dbc.Card(
+        [dbc.CardHeader("Ônibus Ativos", style={"font-size": "18px"}, className="py-1 text-center"),
+        dbc.CardBody(
+            [
+                html.H5("n/a", id="qtd-onibus-agora", className="card-title text-center py-0 mb-1", style={"font-size": "42px"}),
+            ],
+        className="py-2")],
+        color="success", className="mb-2", inverse=True
+    ),
+    dbc.Card(
+        [dbc.CardHeader("Linhas Ativas", style={"font-size": "18px"}, className="py-1 text-center"),
+        dbc.CardBody(
+            [
+                html.H5("n/a", id="qtd-linhas-agora", className="card-title text-center py-0 mb-1", style={"font-size": "42px"}),
+            ],
+        className="py-2")],
+        color="success", inverse=True
+    ),
+    dcc.Interval(
+        id='onibus-agora-update',
+        interval=5000,
+        n_intervals=0
+    )
+])
+
 @plot_direto_dos_trens.callback(
     dash.dependencies.Output('situacao-trens-metros', 'figure'),
     [dash.dependencies.Input('direto-dos-trens-update', 'n_intervals')])
@@ -132,10 +177,31 @@ def update_direto_dos_trens(self):
            'layout': go.Layout(margin=dict(t=0, b=0, l=0, r=0), height=250,uirevision= True)}
     return ret
 
+@plot_onibus_historico.callback(
+    dash.dependencies.Output('historico-onibus', 'figure'),
+    [dash.dependencies.Input('historico-onibus-update', 'n_intervals')])
+def update_onibus_historico(self):
+    data = apis.onibus_historico()
+    plot_info = {
+                'Dia':  data['dias_list'],
+                'Quantidade': data['quantidade_list']
+                }
+
+    data = go.Bar(  x=plot_info['Dia'],
+                    y=plot_info['Quantidade'],
+                    text=plot_info['Quantidade'],
+                    textposition='auto',
+                    marker_color='#007BFF'
+    )
+    ret = {'data': [data],
+           'layout': go.Layout(margin=dict(t=10, b=30, l=30, r=0), height=220, hovermode='closest', uirevision= True)}
+    return ret
+
 @plot_localizacao_sptrans.callback(
     dash.dependencies.Output('loc-sptrans', 'figure'),
     [dash.dependencies.Input('loc-sptrans-update', 'n_intervals')])
 def sp_trans_localizacao(data):
+    lista_traces = []
     mapbox_access_token = os.getenv('MAPBOXAPI')
     plot_info_onibus = apis.sp_trans_localizacao(
         'http://api.olhovivo.sptrans.com.br/v2.1',
@@ -159,8 +225,22 @@ def sp_trans_localizacao(data):
             opacity=1
         )
     )
+    
+    lista_traces.append(data)
 
-    ret = {'data': [data],
+    velocidades = apis.sp_trans_velocidade('http://localhost:8000','/api/onibus-velocidade/ultimos')
+    for velocidade in velocidades:
+        print(velocidade['trecho'])
+        print(len(velocidade['latitudes']))
+        data = go.Scattermapbox(
+            mode = "lines",
+            lat = velocidade['latitudes'],
+            lon = velocidade['longitudes'],
+            hovertext=velocidade['trecho']
+            )
+        lista_traces.append(data)
+
+    ret = {'data': lista_traces,
             'layout': go.Layout(hovermode='closest',
                                 hoverdistance=1,
 
@@ -178,6 +258,24 @@ def sp_trans_localizacao(data):
                                 uirevision= True,
                                 margin=dict(t=0, b=0, l=0, r=0),height=440)}
     return ret
+
+@plot_onibus_agora.callback(
+    [dash.dependencies.Output('qtd-onibus-agora', 'children'),
+    dash.dependencies.Output('qtd-linhas-agora', 'children')],
+    [dash.dependencies.Input('onibus-agora-update', 'n_intervals')])
+def update_onibus_agora(data):
+    info_agora = apis.api_get_data(
+        'http://api.olhovivo.sptrans.com.br/v2.1',
+        '/Posicao',
+        apiPreUrl='/Login/Autenticar?token='+os.getenv('OLHOVIVO')
+    )
+
+    qtd_linhas = len(info_agora['l'])
+    qtd_onibus = 0
+    for linha in info_agora['l']:
+        qtd_onibus += linha['qv']
+
+    return [html.Span(qtd_onibus), html.Span(qtd_linhas)]
 
 @plot_tempo_climatempo.callback(
     [dash.dependencies.Output('tempo_climaTemp', 'value'),

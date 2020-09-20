@@ -1,7 +1,6 @@
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
-from helpers import popular_db_sp_trans
-from helpers import popular_db_apis
+from helpers import popular_db_sp_trans, popular_db_apis, processar_kmz
 import time
 
 #celery -A busdash worker --pool=eventlet -l info
@@ -44,6 +43,14 @@ def save_trens_metros():
 @periodic_task(run_every=(crontab(minute='*/5')), name="save_clima_tempo", ignore_result=True)
 def save_clima_tempo():
     status_json = popular_db_apis.popular_climatempo()
+    status = status_json['status']
+    if status.startswith("erro"):
+        raise TaskFailure(status)
+    return status
+
+@periodic_task(run_every=(crontab(minute='*/15')), name="save_onibus_velocidade", ignore_result=True)
+def save_onibus_velocidade():
+    status_json = processar_kmz.popular_onibus_velocidade()
     status = status_json['status']
     if status.startswith("erro"):
         raise TaskFailure(status)

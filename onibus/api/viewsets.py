@@ -1,11 +1,14 @@
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from onibus.models import OnibusLotacao, OnibusPosicao
+from onibus.models import OnibusLotacao, OnibusPosicao, OnibusVelocidade, OnibusVelocidadeCoordenadas
 from linha.models import Linha
-from .serializers import OnibusLotacaoSerializer, OnibusPosicaoSerializer
+from .serializers import OnibusLotacaoSerializer, OnibusPosicaoSerializer, OnibusVelocidadeSerializer
 from helpers.processar_img import processar_img
+from django.db import connection
 import random
+import datetime
+from itertools import chain
 
 class OnibusLotacaoViewSet(ModelViewSet):
     serializer_class = OnibusLotacaoSerializer
@@ -70,9 +73,6 @@ class OnibusLotacaoViewSet(ModelViewSet):
             serializer = OnibusLotacaoSerializer(queryset, many=True)
             return Response(serializer.data)
 
-        
-
-
 class OnibusPosicaoViewSet(ModelViewSet):
     serializer_class = OnibusPosicaoSerializer
     queryset = OnibusPosicao.objects.all()
@@ -95,3 +95,122 @@ class OnibusPosicaoViewSet(ModelViewSet):
             return Response({'status': 'sucesso'})
         except Exception as e:
             return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
+
+    @action(methods=['GET'], detail=False)
+    def quantidade(self, request):
+        try:
+            data_inicial = self.request.query_params.get('data-inicial', None)
+            data_final = self.request.query_params.get('data-final', None)
+
+            if data_inicial == None or data_final == None:
+                today = datetime.date.today()
+                data_inicial = datetime.datetime.combine(today, datetime.datetime.min.time())
+                data_final = datetime.datetime.combine(today, datetime.datetime.max.time())
+            else:
+                data_inicial = datetime.datetime.strptime(data_inicial, '%Y-%m-%d %H:%M:%S')
+                data_final = datetime.datetime.strptime(data_final, '%Y-%m-%d %H:%M:%S')
+
+            data_inicial = str(data_inicial + datetime.timedelta(hours=3))
+            data_final = str(data_final + datetime.timedelta(hours=3))
+
+            query = f'''SELECT COUNT(*) AS TOTAL
+                        FROM (
+                            SELECT *
+                            FROM onibus_onibusposicao
+                            WHERE data_inclusao IN (
+                                SELECT MAX(data_inclusao)
+                                FROM onibus_onibusposicao
+                                WHERE data_inclusao BETWEEN '{data_inicial}' AND '{data_final}'
+                                GROUP BY id_onibus
+                            )
+                            GROUP BY id_onibus
+                        );'''
+
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+                row = cursor.fetchone()
+
+            return Response({'quantidade': row[0]})
+        except Exception as e:
+            return Response({'erro': type(e).__name__ + ": " + str(e)})
+
+class OnibusVelocidadeViewSet(ModelViewSet):
+    serializer_class = OnibusVelocidadeSerializer
+    queryset = OnibusVelocidade.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        try:
+            lista_onibus_velocidade = []
+            todas_coordenadas = []
+            banco_populado = OnibusVelocidadeCoordenadas.objects.all().exists()
+            
+            for i in request.data['o']:
+
+                #cria objetos onibus_velocidade e adiciona em uma lista (não salva no db)
+                onibus_velocidade = OnibusVelocidade(
+                    nome = i['name'],
+                    vel_trecho = i['description']['vel_trecho'],
+                    vel_via = i['description']['vel_via'],
+                    trecho = i['description']['trecho'],
+                    extensao = i['description']['extensao'],
+                    tempo = i['description']['tempo']
+                )
+                lista_onibus_velocidade.append(onibus_velocidade)
+            OnibusVelocidade.objects.bulk_create(lista_onibus_velocidade)
+
+            k=0
+            for i in request.data['o']:
+                onibus_velocidade = OnibusVelocidade.objects.filter(
+                        nome = lista_onibus_velocidade[k].nome,
+                        vel_trecho = lista_onibus_velocidade[k].vel_trecho,
+                        vel_via = lista_onibus_velocidade[k].vel_via,
+                        trecho = lista_onibus_velocidade[k].trecho,
+                        extensao = lista_onibus_velocidade[k].extensao,
+                        tempo = lista_onibus_velocidade[k].tempo
+                    ).last()
+                lista_coordenadas = []
+                for j in i['coordinates']:
+                    coordenadas = OnibusVelocidadeCoordenadas(
+                        latitude = j['lat'],
+                        longitude = j['lon'],
+                        trecho = lista_onibus_velocidade[k].trecho,
+                        onibus_velocidade = onibus_velocidade
+                    )
+                    lista_coordenadas.append(coordenadas)
+                k+=1
+                todas_coordenadas.append(lista_coordenadas)
+                            
+            #chain remove nested lists e transforma tudo em uma list só
+            todas_coordenadas = list(chain.from_iterable(todas_coordenadas))
+            coordenadas_update = []
+            if banco_populado:
+                for i in todas_coordenadas:
+                    coordenadas = OnibusVelocidadeCoordenadas.objects.filter(
+                            latitude = i.latitude,
+                            longitude = i.longitude,
+                            trecho = i.trecho
+                        ).last()
+                    coordenadas.onibus_velocidade = i.onibus_velocidade
+                    coordenadas_update.append(coordenadas)
+                    
+                OnibusVelocidadeCoordenadas.objects.bulk_update(coordenadas_update, ['onibus_velocidade'])
+            else:
+                OnibusVelocidadeCoordenadas.objects.bulk_create(todas_coordenadas)
+                
+            return Response({'status': 'sucesso'})
+        except Exception as e:
+            return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})
+    
+    @action(methods=['GET'], detail=False)
+    def ultimos(self, request):
+        # queryset = OnibusLotacao.objects.order_by('-data_inclusao').distinct('id_onibus')
+        queryset = OnibusVelocidade.objects.raw(f'''SELECT *
+                                                FROM onibus_onibusvelocidade
+                                                WHERE data_inclusao IN (
+                                                    SELECT MAX(data_inclusao)
+                                                    FROM onibus_onibusvelocidade
+                                                    GROUP BY trecho
+                                                );''')
+
+        serializer = OnibusVelocidadeSerializer(queryset, many=True)
+        return Response(serializer.data)

@@ -1,6 +1,6 @@
 import json
 import urllib
-
+import datetime
 import requests
 
 def api_get_data(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
@@ -9,7 +9,7 @@ def api_get_data(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMetho
     url = apiUrl
     params = "?"
     for param in paramsDict:
-        params += param + "=" + paramsDict[param]
+        params += param + "=" + paramsDict[param] + "&"
     if params == "?":
         params = ""
 
@@ -122,6 +122,29 @@ def sp_trans_localizacao(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPre
     ret = {'lon_list': lon_list, 'lat_list': lat_list, 'color_list': color_list, 'hover_text_list': hover_text_list, 'text_list': text_list, 'size_list': size_list}
     return ret
 
+def sp_trans_velocidade(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
+    data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
+    lista_onibus_velocidade = []
+    for onibus_velocidade in data:
+        lista_lat = []
+        lista_lon = []
+        for coordenada in onibus_velocidade['coordenadas']:
+            lista_lat.append(coordenada['latitude'])
+            lista_lon.append(coordenada['longitude'])
+        obj = {
+            'nome': onibus_velocidade['nome'],
+            'vel_trecho': onibus_velocidade['vel_trecho'],
+            'vel_via': onibus_velocidade['vel_via'],
+            'trecho': onibus_velocidade['trecho'],
+            'extensao': onibus_velocidade['extensao'],
+            'tempo': onibus_velocidade['tempo'],
+            'latitudes': lista_lat,
+            'longitudes': lista_lon
+        }
+        lista_onibus_velocidade.append(obj)
+    return lista_onibus_velocidade
+
+
 def paradas(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):
     data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
     lon_list = []
@@ -137,6 +160,38 @@ def paradas(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='po
         size_list.append(14)
 
     ret = {'lon_list': lon_list, 'lat_list': lat_list, 'color_list': color_list, 'hover_text_list': hover_text_list, 'size_list': size_list}
+    return ret
+
+def onibus_historico():
+    dias_list = []
+    quantidade_list = []
+    weekday_name = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom']
+
+    primeiro = True
+    for i in range(8):
+        dia = (datetime.datetime.today() - datetime.timedelta(days=i))
+        dia_mes = dia.strftime("%d/%m")
+        dia_semana = dia.weekday()
+        if primeiro:
+            primeiro = False
+            dias_list.append(f'Hoje<br>({dia_mes})')
+        else:
+            dias_list.append(f'{weekday_name[dia_semana]}<br>({dia_mes})')
+            
+        data_inicial = datetime.datetime.combine(dia, datetime.datetime.min.time())
+        data_final = datetime.datetime.combine(dia, datetime.datetime.max.time())
+
+        data = api_get_data(
+            'http://localhost:8000/api',
+            '/onibus-posicao/quantidade',
+            paramsDict={'data-inicial': data_inicial.strftime('%Y-%m-%d %H:%M:%S'), 'data-final': data_final.strftime('%Y-%m-%d %H:%M:%S')}
+        )
+        quantidade_list.append(data['quantidade'])
+
+    dias_list.reverse()
+    quantidade_list.reverse()
+
+    ret = {'dias_list': dias_list, 'quantidade_list': quantidade_list}
     return ret
 
 def climatempo_tempo(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='post'):

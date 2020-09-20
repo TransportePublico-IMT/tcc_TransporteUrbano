@@ -24,3 +24,31 @@ class OnibusPosicao(models.Model):
 
     def __str__(self):
         return str(self.id_onibus)
+
+class OnibusVelocidade(models.Model):
+    nome = models.CharField(max_length=300, null=True)
+    vel_trecho = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    vel_via = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    trecho = models.CharField(max_length=300, null=True)
+    extensao = models.IntegerField(null=True)
+    tempo = models.CharField(max_length=5, null=True)
+    data_inclusao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.nome)
+
+class OnibusVelocidadeCoordenadas(models.Model):
+    trecho = models.CharField(max_length=300, null=True)
+    latitude = models.DecimalField(max_digits=8, decimal_places=6)
+    longitude = models.DecimalField(max_digits=8, decimal_places=6)
+    onibus_velocidade = models.ForeignKey(OnibusVelocidade, related_name='coordenadas', on_delete=models.SET_NULL, null=True)
+
+    def __eq__(self, other):
+        return self.latitude==other.latitude and self.longitude==other.longitude
+
+    def __hash__(self):
+        return hash(('latitude', self.latitude,
+                 'longitude', self.longitude))
+    
+    def __str__(self):
+        return f'{self.latitude}, {self.longitude}'

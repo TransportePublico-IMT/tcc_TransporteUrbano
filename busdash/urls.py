@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from rest_framework import routers
-from onibus.api.viewsets import OnibusLotacaoViewSet, OnibusPosicaoViewSet
+from onibus.api.viewsets import OnibusLotacaoViewSet, OnibusPosicaoViewSet, OnibusVelocidadeViewSet
 from linha.api.viewsets import LinhaViewSet
 from parada.api.viewsets import ParadaViewSet
 from trem.api.viewsets import TremViewSet
@@ -15,6 +15,7 @@ from panel import plots, views
 router = routers.DefaultRouter()
 router.register('onibus-lotacao', OnibusLotacaoViewSet, basename='OnibusLotacao')
 router.register('onibus-posicao', OnibusPosicaoViewSet, basename='OnibusPosicao')
+router.register('onibus-velocidade', OnibusVelocidadeViewSet, basename='OnibusVelocidade')
 router.register('linhas', LinhaViewSet, basename='Linha')
 router.register('paradas', ParadaViewSet, basename='Parada')
 router.register('trens', TremViewSet, basename='Trem')
