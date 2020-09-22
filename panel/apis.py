@@ -129,8 +129,14 @@ def sp_trans_velocidade(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreU
         lista_lat = []
         lista_lon = []
         for coordenada in onibus_velocidade['coordenadas']:
-            lista_lat.append(coordenada['latitude'])
-            lista_lon.append(coordenada['longitude'])
+            if coordenada['latitude'] == None or coordenada['longitude'] == None:
+                lista_lat.append('')
+                lista_lon.append('')
+            else:
+                lista_lat.append(coordenada['latitude'])
+                lista_lon.append(coordenada['longitude'])
+        lista_lat.append('')
+        lista_lon.append('')
         obj = {
             'nome': onibus_velocidade['nome'],
             'vel_trecho': onibus_velocidade['vel_trecho'],
@@ -156,7 +162,7 @@ def paradas(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl='', apiPreUrlMethod='po
         lat_list.append(parada["latitude"])
         lon_list.append(parada["longitude"])
         hover_text_list.append(parada["nome"])
-        color_list.append("#DC3545")
+        color_list.append("#007bff")
         size_list.append(14)
 
     ret = {'lon_list': lon_list, 'lat_list': lat_list, 'color_list': color_list, 'hover_text_list': hover_text_list, 'size_list': size_list}
@@ -183,7 +189,7 @@ def onibus_historico():
 
         data = api_get_data(
             'http://localhost:8000/api',
-            '/onibus-posicao/quantidade',
+            '/onibus-posicao/quantidade/',
             paramsDict={'data-inicial': data_inicial.strftime('%Y-%m-%d %H:%M:%S'), 'data-final': data_final.strftime('%Y-%m-%d %H:%M:%S')}
         )
         quantidade_list.append(data['quantidade'])

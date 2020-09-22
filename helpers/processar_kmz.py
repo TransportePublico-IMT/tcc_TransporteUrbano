@@ -37,7 +37,7 @@ def get_infos_from_description(description):
     except AttributeError:
         trecho = None
     try:
-        extensao = re.search('\(metros\):(.*)Velocidade média do trecho', description).group(1).replace(',', '').strip()
+        extensao = re.search('\(metros\):(.*)Velocidade média do trecho', description).group(1).replace(',', '').replace('.', '').strip()
     except AttributeError:
         extensao = None
     try:
@@ -87,7 +87,8 @@ def get_kml_dict_info(kml_dict):
                     for k in j['MultiGeometry']['LineString']:
                         coordinates += k['coordinates']
                         if count < len_elements:
-                            coordinates += '\n'
+                            #salva uma coordenada como nulo para separar elementos do multigeometry
+                            coordinates += '\n\n'
                         count += 1
                     coordinates_list = clear_coordinates_info(coordinates)           
                 else:
@@ -111,7 +112,8 @@ def get_kml_dict_info(kml_dict):
                 for k in i['Placemark']['MultiGeometry']['LineString']:
                     coordinates += k['coordinates']
                     if count < len_elements:
-                        coordinates += '\n'
+                        #salva uma coordenada como nulo para separar elementos do multigeometry
+                        coordinates += '\n\n'
                     count += 1
                 coordinates_list = clear_coordinates_info(coordinates)          
             else:

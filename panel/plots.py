@@ -16,6 +16,7 @@ import plotly.graph_objects as go
 from django.shortcuts import render
 from plotly.offline import plot
 from . import apis
+from itertools import chain
 
 # Create .env file path.
 dotenv_path = join(dirname(__file__), '../.ENV')
@@ -210,40 +211,85 @@ def sp_trans_localizacao(data):
     )
     plot_info_paradas = apis.paradas(
         'http://localhost:8000',
-        '/api/paradas'
+        '/api/paradas/'
     )
-    data = go.Scattermapbox(
-        lat=plot_info_onibus['lat_list'] + plot_info_paradas['lat_list'],
-        lon=plot_info_onibus['lon_list'] + plot_info_paradas['lon_list'],
-        hovertext= plot_info_onibus['hover_text_list'] + plot_info_paradas['hover_text_list'],
+    onibus = go.Scattermapbox(
+        lat=plot_info_onibus['lat_list'],
+        lon=plot_info_onibus['lon_list'],
+        hovertext= plot_info_onibus['hover_text_list'],
         mode='markers+text',
-        textposition='bottom center',
-        text=plot_info_onibus['text_list'] + plot_info_paradas['hover_text_list'],
+        name='Ônibus',
         marker=go.scattermapbox.Marker(
-            size=plot_info_onibus['size_list'] + plot_info_paradas['size_list'],
-            color=plot_info_onibus['color_list'] + plot_info_paradas['color_list'],
+            size=plot_info_onibus['size_list'],
+            color=plot_info_onibus['color_list'],
             opacity=1
         )
-    )
-    
-    lista_traces.append(data)
+    )    
+    lista_traces.append(onibus)
 
-    velocidades = apis.sp_trans_velocidade('http://localhost:8000','/api/onibus-velocidade/ultimos')
+    paradas = go.Scattermapbox(
+        lat=plot_info_paradas['lat_list'],
+        lon=plot_info_paradas['lon_list'],
+        hovertext= plot_info_paradas['hover_text_list'],
+        mode='markers+text',
+        textposition='bottom center',
+        text=plot_info_paradas['hover_text_list'],
+        name='Paradas',
+        marker=go.scattermapbox.Marker(
+            size=plot_info_paradas['size_list'],
+            color=plot_info_paradas['color_list'],
+            opacity=1
+        )
+    )    
+    lista_traces.append(paradas)
+ 
+    traces = {
+        'verde': {'lat': [], 'lon': [], 'hovertext': [], 'color': '#28a745', 'name': 'Rápido'},
+        'amarelo': {'lat': [], 'lon': [], 'hovertext': [], 'color': '#ffc107', 'name': 'Intenso'},
+        'vermelho': {'lat': [], 'lon': [], 'hovertext': [], 'color': '#dc3545', 'name': 'Lento'}
+    }
+    velocidades = apis.sp_trans_velocidade('http://localhost:8000','/api/onibus-velocidade/ultimos/')
     for velocidade in velocidades:
-        print(velocidade['trecho'])
-        print(len(velocidade['latitudes']))
-        data = go.Scattermapbox(
-            mode = "lines",
-            lat = velocidade['latitudes'],
-            lon = velocidade['longitudes'],
+        color = ''
+ 
+        if velocidade['vel_trecho'] != None and velocidade['vel_via'] != None:
+            lat = velocidade['latitudes']
+            lon = velocidade['longitudes']
             hovertext=velocidade['trecho']
-            )
+            if velocidade['vel_trecho'] >= velocidade['vel_via']:
+                traces['verde']['lat'].append(lat)
+                traces['verde']['lon'].append(lon)
+                traces['verde']['hovertext'].append(hovertext)
+            elif velocidade['vel_trecho'] >= velocidade['vel_via'] - 3:
+                traces['amarelo']['lat'].append(lat)
+                traces['amarelo']['lon'].append(lon)
+                traces['amarelo']['hovertext'].append(hovertext)
+            else:
+                traces['vermelho']['lat'].append(lat)
+                traces['vermelho']['lon'].append(lon)
+                traces['vermelho']['hovertext'].append(hovertext)
+    
+    for trace in traces:
+        print(traces[trace]['lon'])
+        data = go.Scattermapbox(
+            mode = "lines+text",
+            lat = list(chain.from_iterable(traces[trace]['lat'])),
+            lon = list(chain.from_iterable(traces[trace]['lon'])),
+            hovertext= traces[trace]['hovertext'],
+            name = traces[trace]['name'],
+            line={'color': traces[trace]['color']},
+        )
         lista_traces.append(data)
-
+ 
     ret = {'data': lista_traces,
             'layout': go.Layout(hovermode='closest',
                                 hoverdistance=1,
-
+                                legend=dict(
+                                    yanchor="top",
+                                    y=0.99,
+                                    xanchor="left",
+                                    x=0.01
+                                    ),
                                 mapbox=dict(
                                     accesstoken=mapbox_access_token,
                                     bearing=0,

@@ -48,7 +48,7 @@ def save_clima_tempo():
         raise TaskFailure(status)
     return status
 
-@periodic_task(run_every=(crontab(minute='*/15')), name="save_onibus_velocidade", ignore_result=True)
+@periodic_task(run_every=(crontab(minute='*/2')), name="save_onibus_velocidade", ignore_result=True)
 def save_onibus_velocidade():
     status_json = processar_kmz.popular_onibus_velocidade()
     status = status_json['status']
