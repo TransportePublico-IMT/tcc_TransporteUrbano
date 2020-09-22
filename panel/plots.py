@@ -220,8 +220,8 @@ def sp_trans_localizacao(data):
         mode='markers+text',
         name='Ônibus',
         marker=go.scattermapbox.Marker(
-            size=plot_info_onibus['size_list'],
-            color=plot_info_onibus['color_list'],
+            size=10,
+            color='#212529',
             opacity=1
         )
     )    
@@ -234,48 +234,84 @@ def sp_trans_localizacao(data):
         mode='markers+text',
         textposition='bottom center',
         text=plot_info_paradas['hover_text_list'],
-        name='Paradas',
+        name='Parada',
         marker=go.scattermapbox.Marker(
-            size=plot_info_paradas['size_list'],
-            color=plot_info_paradas['color_list'],
+            size=14,
+            color='#007bff',
             opacity=1
         )
     )    
     lista_traces.append(paradas)
  
     traces = {
-        'verde': {'lat': [], 'lon': [], 'hovertext': [], 'color': '#28a745', 'name': 'Rápido'},
-        'amarelo': {'lat': [], 'lon': [], 'hovertext': [], 'color': '#ffc107', 'name': 'Intenso'},
-        'vermelho': {'lat': [], 'lon': [], 'hovertext': [], 'color': '#dc3545', 'name': 'Lento'}
+        'verde': {'lat': [], 'lon': [], 'nome': [], 'vel_trecho': [], 'vel_via': [], 'extensao': [], 'tempo': [], 'trecho': [], 'color': '#28a745', 'name': 'Rápido'},
+        'amarelo': {'lat': [], 'lon': [], 'nome': [], 'vel_trecho': [], 'vel_via': [], 'extensao': [], 'tempo': [], 'trecho': [], 'color': '#ffc107', 'name': 'Intenso'},
+        'vermelho': {'lat': [], 'lon': [], 'nome': [], 'vel_trecho': [], 'vel_via': [], 'extensao': [], 'tempo': [], 'trecho': [], 'color': '#dc3545', 'name': 'Lento'}
     }
     velocidades = apis.sp_trans_velocidade('http://localhost:8000','/api/onibus-velocidade/ultimos/')
     for velocidade in velocidades:
         color = ''
- 
+
         if velocidade['vel_trecho'] != None and velocidade['vel_via'] != None:
             lat = velocidade['latitudes']
             lon = velocidade['longitudes']
-            hovertext=velocidade['trecho']
+            nome=velocidade['nome']
+            vel_trecho=velocidade['vel_trecho']
+            vel_via=velocidade['vel_via']
+            extensao=velocidade['extensao']
+            tempo=velocidade['tempo']
+            trecho=velocidade['trecho']
             if velocidade['vel_trecho'] >= velocidade['vel_via']:
                 traces['verde']['lat'].append(lat)
                 traces['verde']['lon'].append(lon)
-                traces['verde']['hovertext'].append(hovertext)
+                traces['verde']['nome'].append(nome)
+                traces['verde']['trecho'].append(trecho)
+                traces['verde']['vel_trecho'].append(vel_trecho)
+                traces['verde']['vel_via'].append(vel_via)
+                traces['verde']['extensao'].append(extensao)
+                traces['verde']['tempo'].append(tempo)
             elif velocidade['vel_trecho'] >= velocidade['vel_via'] - 3:
                 traces['amarelo']['lat'].append(lat)
                 traces['amarelo']['lon'].append(lon)
-                traces['amarelo']['hovertext'].append(hovertext)
+                traces['amarelo']['trecho'].append(trecho)
+                traces['amarelo']['nome'].append(nome)
+                traces['amarelo']['vel_trecho'].append(vel_trecho)
+                traces['amarelo']['vel_via'].append(vel_via)
+                traces['amarelo']['extensao'].append(extensao)
+                traces['amarelo']['tempo'].append(tempo)
             else:
                 traces['vermelho']['lat'].append(lat)
                 traces['vermelho']['lon'].append(lon)
-                traces['vermelho']['hovertext'].append(hovertext)
+                traces['vermelho']['nome'].append(nome)
+                traces['vermelho']['trecho'].append(trecho)
+                traces['vermelho']['vel_via'].append(vel_via)
+                traces['vermelho']['vel_trecho'].append(vel_trecho)
+                traces['vermelho']['extensao'].append(extensao)
+                traces['vermelho']['tempo'].append(tempo)
+    
+    
     
     for trace in traces:
-        print(traces[trace]['lon'])
+        lista_hover_text = []
+        k=0
+        for i in traces[trace]['lat']:
+            for j in i:
+                lista_hover_text.append(
+                    f'''Nome: {traces[trace]['nome'][k]}
+                    <br>Trecho: {traces[trace]['trecho'][k]}
+                    <br>Velocidade Atual: {traces[trace]['vel_trecho'][k]} km/m
+                    <br>Velocidade Histórica: {traces[trace]['vel_via'][k]} km/h
+                    <br>Extensão: {traces[trace]['extensao'][k]} m
+                    <br>Tempo: {traces[trace]['tempo'][k]}'''
+                    )
+            k+=1
+
         data = go.Scattermapbox(
-            mode = "lines+text",
+            mode = "lines",
             lat = list(chain.from_iterable(traces[trace]['lat'])),
             lon = list(chain.from_iterable(traces[trace]['lon'])),
-            hovertext= traces[trace]['hovertext'],
+            hoverinfo='text',
+            hovertext = lista_hover_text,
             name = traces[trace]['name'],
             line={'color': traces[trace]['color']},
         )

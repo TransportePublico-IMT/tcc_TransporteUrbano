@@ -9,6 +9,14 @@
 <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 <script src="https:////cdn.datatables.net/plug-ins/1.10.21/dataRender/datetime.js" crossorigin="anonymous"></script>
 <div class="row mt-3">
+    <div class="col-12">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Fluxo SP-Trans</div>
+            <div class="card-body p-1" style="height: 461px;" >
+                {% plotly_app name="LocSptrans" ratio=0.28 %}
+            </div>
+        </div>
+    </div>
     <div class="col-7">
         <div class="card mb-3">
             <div class="card-header py-1 h6 text-muted"><i class="fas fa-users mr-1"></i>Lotação última hora</div>
@@ -33,9 +41,8 @@
     </div>
     <div class="col-5">
         <div class="card mb-3">
-            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Localização SP-Trans</div>
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Eventos em SP</div>
             <div class="card-body p-1" style="height: 461px;" >
-                {% plotly_app name="LocSptrans" ratio=0.7 %}
             </div>
         </div>
     </div>
