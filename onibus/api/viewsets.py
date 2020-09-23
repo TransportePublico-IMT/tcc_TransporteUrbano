@@ -9,6 +9,7 @@ from django.db import connection
 import random
 import datetime
 from itertools import chain
+from datetime import timedelta
 
 class OnibusLotacaoViewSet(ModelViewSet):
     serializer_class = OnibusLotacaoSerializer
@@ -159,6 +160,10 @@ class OnibusVelocidadeViewSet(ModelViewSet):
             OnibusVelocidade.objects.bulk_create(lista_onibus_velocidade)
 
             k=0
+            id_inicial = ''
+            primeira_execucao = True
+            agora_utc = datetime.datetime.now() + timedelta(hours=3)
+            time_threshold = agora_utc - timedelta(minutes=2)
             for i in request.data['o']:
                 onibus_velocidade = OnibusVelocidade.objects.filter(
                         nome = lista_onibus_velocidade[k].nome,
@@ -166,15 +171,35 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                         vel_via = lista_onibus_velocidade[k].vel_via,
                         trecho = lista_onibus_velocidade[k].trecho,
                         extensao = lista_onibus_velocidade[k].extensao,
-                        tempo = lista_onibus_velocidade[k].tempo
-                    ).last()
+                        tempo = lista_onibus_velocidade[k].tempo,
+                        data_inclusao__gt=time_threshold #pega valores maiores do que dois minutos atrás, para nao filtrar o db todo
+                    )
+                onibus_velocidade = list(onibus_velocidade)
+
+                #esse processamento se deve ao fato de as vezes o onibus_velocidade retornar 2 objetos
+                #para saber qual é o certo, deve-se pegar o objeto da iteração que estamos
+                if primeira_execucao:
+                    if len(onibus_velocidade) > 1:
+                        id_iniciais = []
+                        for x in onibus_velocidade:
+                            id_iniciais.append(x.id)
+                        id_inicial = min(id_iniciais)
+                    else:
+                        id_inicial = onibus_velocidade[0].id
+                
+                onibus_velocidade_certo = ''
+                for x in onibus_velocidade:
+                    if x.id == id_inicial + k:
+                        onibus_velocidade_certo = x
+                
+                primeira_execucao = False
                 lista_coordenadas = []
                 for j in i['coordinates']:
                     coordenadas = OnibusVelocidadeCoordenadas(
                         latitude = j['lat'],
                         longitude = j['lon'],
                         trecho = lista_onibus_velocidade[k].trecho,
-                        onibus_velocidade = onibus_velocidade
+                        onibus_velocidade = onibus_velocidade_certo
                     )
                     lista_coordenadas.append(coordenadas)
                 k+=1
@@ -189,9 +214,11 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                             latitude = i.latitude,
                             longitude = i.longitude,
                             trecho = i.trecho
-                        ).last()
-                    coordenadas.onibus_velocidade = i.onibus_velocidade
-                    coordenadas_update.append(coordenadas)
+                        )
+                    #esse for existe para caso retorne duas coordenadas (no caso de ser null irá retornar)
+                    for j in list(coordenadas):
+                        j.onibus_velocidade = i.onibus_velocidade
+                        coordenadas_update.append(j)
                     
                 OnibusVelocidadeCoordenadas.objects.bulk_update(coordenadas_update, ['onibus_velocidade'])
             else:

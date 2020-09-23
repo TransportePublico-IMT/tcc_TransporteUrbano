@@ -218,6 +218,7 @@ def sp_trans_localizacao(data):
         lon=plot_info_onibus['lon_list'],
         hovertext= plot_info_onibus['hover_text_list'],
         mode='markers+text',
+        hoverinfo='text',
         name='Ônibus',
         marker=go.scattermapbox.Marker(
             size=10,
@@ -232,6 +233,7 @@ def sp_trans_localizacao(data):
         lon=plot_info_paradas['lon_list'],
         hovertext= plot_info_paradas['hover_text_list'],
         mode='markers+text',
+        hoverinfo='text',
         textposition='bottom center',
         text=plot_info_paradas['hover_text_list'],
         name='Parada',
@@ -261,7 +263,7 @@ def sp_trans_localizacao(data):
             extensao=velocidade['extensao']
             tempo=velocidade['tempo']
             trecho=velocidade['trecho']
-            if velocidade['vel_trecho'] >= velocidade['vel_via']:
+            if velocidade['vel_trecho'] >= 23:
                 traces['verde']['lat'].append(lat)
                 traces['verde']['lon'].append(lon)
                 traces['verde']['nome'].append(nome)
@@ -270,7 +272,7 @@ def sp_trans_localizacao(data):
                 traces['verde']['vel_via'].append(vel_via)
                 traces['verde']['extensao'].append(extensao)
                 traces['verde']['tempo'].append(tempo)
-            elif velocidade['vel_trecho'] >= velocidade['vel_via'] - 3:
+            elif velocidade['vel_trecho'] >= 20:
                 traces['amarelo']['lat'].append(lat)
                 traces['amarelo']['lon'].append(lon)
                 traces['amarelo']['trecho'].append(trecho)
@@ -297,10 +299,10 @@ def sp_trans_localizacao(data):
         for i in traces[trace]['lat']:
             for j in i:
                 lista_hover_text.append(
-                    f'''Nome: {traces[trace]['nome'][k]}
+                    f'''Via: {traces[trace]['nome'][k]}
+                    <br>Velocidade da via: {traces[trace]['vel_via'][k]} km/h
                     <br>Trecho: {traces[trace]['trecho'][k]}
-                    <br>Velocidade Atual: {traces[trace]['vel_trecho'][k]} km/m
-                    <br>Velocidade Histórica: {traces[trace]['vel_via'][k]} km/h
+                    <br>Velocidade do trecho: {traces[trace]['vel_trecho'][k]} km/h
                     <br>Extensão: {traces[trace]['extensao'][k]} m
                     <br>Tempo: {traces[trace]['tempo'][k]}'''
                     )
