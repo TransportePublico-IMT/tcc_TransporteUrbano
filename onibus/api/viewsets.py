@@ -10,6 +10,7 @@ import random
 import datetime
 from itertools import chain
 from datetime import timedelta
+import time
 
 class OnibusLotacaoViewSet(ModelViewSet):
     serializer_class = OnibusLotacaoSerializer
@@ -146,7 +147,6 @@ class OnibusVelocidadeViewSet(ModelViewSet):
             banco_populado = OnibusVelocidadeCoordenadas.objects.all().exists()
             
             for i in request.data['o']:
-
                 #cria objetos onibus_velocidade e adiciona em uma lista (não salva no db)
                 onibus_velocidade = OnibusVelocidade(
                     nome = i['name'],
@@ -163,21 +163,14 @@ class OnibusVelocidadeViewSet(ModelViewSet):
             id_inicial = ''
             primeira_execucao = True
             agora_utc = datetime.datetime.now() + timedelta(hours=3)
-            time_threshold = agora_utc - timedelta(minutes=2)
-            for i in request.data['o']:
-                onibus_velocidade = OnibusVelocidade.objects.filter(
-                        nome = lista_onibus_velocidade[k].nome,
-                        vel_trecho = lista_onibus_velocidade[k].vel_trecho,
-                        vel_via = lista_onibus_velocidade[k].vel_via,
-                        trecho = lista_onibus_velocidade[k].trecho,
-                        extensao = lista_onibus_velocidade[k].extensao,
-                        tempo = lista_onibus_velocidade[k].tempo,
-                        data_inclusao__gt=time_threshold #pega valores maiores do que dois minutos atrás, para nao filtrar o db todo
+            time_threshold = agora_utc - timedelta(minutes=1)
+            onibus_velocidade = OnibusVelocidade.objects.filter(
+                        data_inclusao__gt=time_threshold #pega valores maiores do que um minuto (que acabou de salvar) atrás, para nao filtrar o db todo
                     )
-                onibus_velocidade = list(onibus_velocidade)
-
-                #esse processamento se deve ao fato de as vezes o onibus_velocidade retornar 2 objetos
-                #para saber qual é o certo, deve-se pegar o objeto da iteração que estamos
+            onibus_velocidade = list(onibus_velocidade)
+            
+            for i in request.data['o']:
+                #para saber qual é o certo, deve-se pegar o objeto cujo id bate com a iteração atual
                 if primeira_execucao:
                     if len(onibus_velocidade) > 1:
                         id_iniciais = []
@@ -186,13 +179,12 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                         id_inicial = min(id_iniciais)
                     else:
                         id_inicial = onibus_velocidade[0].id
-                
+
                 onibus_velocidade_certo = ''
                 for x in onibus_velocidade:
-                    if x.id == id_inicial + k:
+                    if x.id == id_inicial + k: #id_inicial + k é o objeto cujo id bate com a iteração atual
                         onibus_velocidade_certo = x
                 
-                primeira_execucao = False
                 lista_coordenadas = []
                 for j in i['coordinates']:
                     coordenadas = OnibusVelocidadeCoordenadas(
@@ -202,28 +194,33 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                         onibus_velocidade = onibus_velocidade_certo
                     )
                     lista_coordenadas.append(coordenadas)
+
+                primeira_execucao = False
                 k+=1
                 todas_coordenadas.append(lista_coordenadas)
                             
             #chain remove nested lists e transforma tudo em uma list só
             todas_coordenadas = list(chain.from_iterable(todas_coordenadas))
             coordenadas_update = []
+            
             if banco_populado:
-                for i in todas_coordenadas:
-                    coordenadas = OnibusVelocidadeCoordenadas.objects.filter(
-                            latitude = i.latitude,
-                            longitude = i.longitude,
-                            trecho = i.trecho
-                        )
-                    #esse for existe para caso retorne duas coordenadas (no caso de ser null irá retornar)
-                    for j in list(coordenadas):
-                        j.onibus_velocidade = i.onibus_velocidade
-                        coordenadas_update.append(j)
-                    
-                OnibusVelocidadeCoordenadas.objects.bulk_update(coordenadas_update, ['onibus_velocidade'])
+                coordenadas_banco = list(OnibusVelocidadeCoordenadas.objects.all())
+                if len(coordenadas_banco) == len(todas_coordenadas):
+                    coordenadas_banco.sort()
+                    todas_coordenadas.sort()
+                    k=0
+                    for i in todas_coordenadas:
+                        coordenada = coordenadas_banco[k]
+                        coordenada.onibus_velocidade = i.onibus_velocidade
+                        coordenadas_update.append(coordenada)
+                        k+=1
+                    OnibusVelocidadeCoordenadas.objects.bulk_update(coordenadas_update, ['onibus_velocidade'])
+
+                else:
+                    OnibusVelocidadeCoordenadas.objects.all().delete()
+                    OnibusVelocidadeCoordenadas.objects.bulk_create(todas_coordenadas)
             else:
                 OnibusVelocidadeCoordenadas.objects.bulk_create(todas_coordenadas)
-                
             return Response({'status': 'sucesso'})
         except Exception as e:
             return Response({'status': 'erro: ' + type(e).__name__ + ": " + str(e)})

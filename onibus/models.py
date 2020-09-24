@@ -44,11 +44,17 @@ class OnibusVelocidadeCoordenadas(models.Model):
     onibus_velocidade = models.ForeignKey(OnibusVelocidade, related_name='coordenadas', on_delete=models.SET_NULL, null=True)
 
     def __eq__(self, other):
-        return self.latitude==other.latitude and self.longitude==other.longitude
+        return self.latitude==other.latitude and self.longitude==other.longitude and self.trecho==other.trecho
+
+    def __lt__(self, other):
+        return float(self.latitude or 0) < float(other.latitude or 0) and float(self.longitude or 0) < float(other.longitude or 0) and self.trecho < other.trecho
+    
+    def __gt__(self, other):
+        return float(self.latitude or 0) > float(other.latitude or 0) and float(self.longitude or 0) > float(other.longitude or 0) and self.trecho > other.trecho
 
     def __hash__(self):
         return hash(('latitude', self.latitude,
                  'longitude', self.longitude))
     
     def __str__(self):
-        return f'{self.latitude}, {self.longitude}'
+        return f'{self.latitude}, {self.longitude}, {self.trecho}'

@@ -44,7 +44,7 @@ def popular_trens_metros():
     return r.json()
 
 def popular_climatempo():
-    idCity_STAndre = 3667
+    idCity_STAndre = 3477
     token = os.getenv('CLIMATEMPO')
     apiBaseUrl = "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
     apiUrl = str(idCity_STAndre) + "/current?token=" + token

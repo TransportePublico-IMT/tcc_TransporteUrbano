@@ -52,7 +52,7 @@ plot_localizacao_sptrans.layout = html.Div([
     dcc.Graph(id='loc-sptrans'),
     dcc.Interval(
         id='loc-sptrans-update',
-        interval=60000,
+        interval=20000,
         n_intervals=0
     )
 ])

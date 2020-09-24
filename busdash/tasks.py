@@ -4,6 +4,7 @@ from helpers import popular_db_sp_trans, popular_db_apis, processar_kmz
 import time
 
 #celery -A busdash worker --pool=eventlet -l info
+#celery -A busdash beat -l info
 
 class TaskFailure(Exception):
    pass
@@ -48,7 +49,7 @@ def save_clima_tempo():
         raise TaskFailure(status)
     return status
 
-@periodic_task(run_every=(crontab(minute='*/2')), name="save_onibus_velocidade", ignore_result=True)
+@periodic_task(run_every=(crontab(minute='*/15')), name="save_onibus_velocidade", ignore_result=True)
 def save_onibus_velocidade():
     status_json = processar_kmz.popular_onibus_velocidade()
     status = status_json['status']
