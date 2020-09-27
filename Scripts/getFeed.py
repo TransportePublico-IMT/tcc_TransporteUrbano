@@ -1,5 +1,6 @@
 import os
 
+from getLocation import getAdress
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -8,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 option = webdriver.ChromeOptions()
 option.add_argument(" — incognito")
+option.headless = True
 
 browser = webdriver.Chrome(
     executable_path=os.getcwd() + "/chromeDriver/chromedrivermac", options=option
@@ -54,6 +56,10 @@ for link in links:
             data = x.text
     datas.append(data)
 
+enderecos = []
+for x in datas:
+    enderecos.append(getAdress(x))
+
 print("Eventos: \n")
 print(evento, "\n")
 print(len(evento))
@@ -63,3 +69,6 @@ print(len(links))
 print("Datas: \n")
 print(datas, "\n")
 print(len(datas))
+print("Enderecos: \n")
+print(enderecos, "\n")
+print(len(enderecos))
