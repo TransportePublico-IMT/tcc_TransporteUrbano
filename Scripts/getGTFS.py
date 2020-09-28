@@ -4,7 +4,7 @@ import zipfile
 import requests
 from transitfeeds import TransitFeeds
 
-API_KEY = os.environ.get("GTFSFeed")
+API_KEY = '0dda934c-19a7-468d-9303-9be4b02b62e2'
 tf = TransitFeeds(API_KEY)
 i = 0
 print("WD: " + os.getcwd())
