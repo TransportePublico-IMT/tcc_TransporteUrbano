@@ -11,6 +11,7 @@ from trem.models import Trem
 
 # Create .env file path.
 dotenv_path = join(dirname(__file__), "../.ENV")
+
 # Load file from the path.
 load_dotenv(dotenv_path)
 

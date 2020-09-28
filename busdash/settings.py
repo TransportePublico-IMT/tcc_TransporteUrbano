@@ -14,6 +14,7 @@ import os
 from os.path import dirname, join
 
 from dotenv import load_dotenv
+from kombu.utils.url import safequote
 
 # Create .env file path.
 dotenv_path = join(dirname(__file__), "../.ENV")
@@ -178,9 +179,14 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "busdash/staticfiles")]
 STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "django-db"
+
+BROKER_URL = "sqs://"
 CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
-CELERY_TIMEZONE = "America/Sao_Paulo"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_DEFAULT_QUEUE = "celery"
+CELERY_RESULT_BACKEND = None  # Disabling the results backend
+BROKER_TRANSPORT_OPTIONS = {
+    "region": "us-east-2",
+    "polling_interval": 20,
+}

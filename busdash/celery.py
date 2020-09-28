@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
+import dotenv
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
@@ -13,10 +14,14 @@ app = Celery("busdash")
 # the configuration object to child processes.
 # - namespace='CELERY' means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
-app.config_from_object("django.conf:settings", namespace="CELERY")
+app.config_from_object("django.conf:settings")
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
+
+app.conf.beat_schedule = {
+    "display_time-30-seconds": {"task": "demoapp.tasks.display_time", "schedule": 10.0},
+}
 
 
 @app.task(bind=True)

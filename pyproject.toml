@@ -12,6 +12,7 @@ exclude = '''
   | buck-out
   | build
   | dist
-  | \deploy
+  | deploy
 )/
+| /deploy/update-ecs.py
 '''
