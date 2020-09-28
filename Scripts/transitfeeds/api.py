@@ -69,11 +69,11 @@ class TransitFeeds(object):
 
     def latest(self, feed):
         """
-            Args:
-                feed (str): The ID of the feed to retrieve the latest feed version for.
-                    Use `TransitFeeds.feeds` to discover feed IDs.
-            Returns:
-                (str) The URL of the latest feed
+        Args:
+            feed (str): The ID of the feed to retrieve the latest feed version for.
+                Use `TransitFeeds.feeds` to discover feed IDs.
+        Returns:
+            (str) The URL of the latest feed
         """
         r = self._request(
             "getLatestFeedVersion", feed=feed, rargs={"allow_redirects": False}

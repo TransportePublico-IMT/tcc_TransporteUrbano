@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Trem(models.Model):
     id_linha = models.IntegerField()
     data_ocorrencia = models.DateTimeField()

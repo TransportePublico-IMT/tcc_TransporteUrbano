@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Linha(models.Model):
     id_linha = models.IntegerField(unique=True)
     letreiro = models.CharField(max_length=80)
