@@ -85,7 +85,7 @@ def popular_onibus():
                 "latitude": y["py"],
                 "longitude": y["px"],
                 "id_linha": i["cl"],
-                "frota": i["sl"],
+                "frota": i["qv"],
             }
             list_onibus.append(onibus)
 
