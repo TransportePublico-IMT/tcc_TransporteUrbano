@@ -14,5 +14,5 @@ exclude = '''
   | dist
   | deploy
 )/
-| deploy/update-ecs.py
+| /deploy/update-ecs.py
 '''
