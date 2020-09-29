@@ -190,3 +190,4 @@ BROKER_TRANSPORT_OPTIONS = {
     "region": "us-east-2",
     "polling_interval": 20,
 }
+CELERY_TIMEZONE = "America/Sao_Paulo"

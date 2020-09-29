@@ -152,7 +152,5 @@ cython_debug/
 
 .vscode/
 *vcscode*
-*/migrations/*
 
 *.zip
-*/migrations
