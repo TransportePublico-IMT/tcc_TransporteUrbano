@@ -42,7 +42,7 @@ class OnibusPosicaoSerializer(ModelSerializer):
 class OnibusVelocidadeCoordenadasSerializer(ModelSerializer):
     class Meta:
         model = OnibusVelocidadeCoordenadas
-        fields = ("latitude", "longitude")
+        fields = ("latitude", "longitude", "id")
 
 
 class OnibusVelocidadeSerializer(ModelSerializer):
@@ -60,3 +60,7 @@ class OnibusVelocidadeSerializer(ModelSerializer):
             "tempo",
             "coordenadas",
         )
+
+    def get_coordenadas(self, instance):
+        coordenadas = instance.coordenadas.all().order_by('id')
+        return OnibusVelocidadeCoordenadasSerializer(coordenadas, many=True).data

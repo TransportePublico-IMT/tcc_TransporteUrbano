@@ -7,11 +7,9 @@ from celery.task.schedules import crontab
 
 from helpers import popular_db_apis, popular_db_sp_trans, processar_kmz
 
-# celery -A busdash worker --pool=eventlet -l info
-# celery -A busdash beat -l info
+# celery -A busdash worker --pool=eventlet -l info --detach
 
-
-# celery -A busdash worker --pool=eventlet -l info
+# celery -A busdash beat -l info --detach
 
 
 class TaskFailure(Exception):

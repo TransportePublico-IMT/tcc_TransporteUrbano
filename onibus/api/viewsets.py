@@ -141,9 +141,9 @@ class OnibusPosicaoViewSet(ModelViewSet):
             data_inicial = str(data_inicial + datetime.timedelta(hours=3))
             data_final = str(data_final + datetime.timedelta(hours=3))
 
-            query = f"""SELECT COUNT(*) AS TOTAL
+            query = f"""SELECT COUNT(id_onibus) AS TOTAL
                         FROM (
-                            SELECT *
+                            SELECT id_onibus
                             FROM onibus_onibusposicao
                             WHERE data_inclusao IN (
                                 SELECT MAX(data_inclusao)
@@ -152,7 +152,7 @@ class OnibusPosicaoViewSet(ModelViewSet):
                                 GROUP BY id_onibus
                             )
                             GROUP BY id_onibus
-                        );"""
+                        ) a;"""
 
             with connection.cursor() as cursor:
                 cursor.execute(query)
@@ -261,12 +261,12 @@ class OnibusVelocidadeViewSet(ModelViewSet):
         # queryset = OnibusLotacao.objects.order_by('-data_inclusao').distinct('id_onibus')
         queryset = OnibusVelocidade.objects.raw(
             f"""SELECT *
-                                                FROM onibus_onibusvelocidade
-                                                WHERE data_inclusao IN (
-                                                    SELECT MAX(data_inclusao)
-                                                    FROM onibus_onibusvelocidade
-                                                    GROUP BY trecho
-                                                );"""
+                FROM onibus_onibusvelocidade
+                WHERE data_inclusao IN (
+                    SELECT MAX(data_inclusao)
+                    FROM onibus_onibusvelocidade
+                    GROUP BY trecho
+                );"""
         )
 
         serializer = OnibusVelocidadeSerializer(queryset, many=True)

@@ -64,6 +64,9 @@ class OnibusVelocidadeCoordenadas(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
+    
+    class Meta:
+        ordering = ['id']
 
     def __eq__(self, other):
         return (

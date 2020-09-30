@@ -60,6 +60,7 @@ pandas==1.0.3
 pathspec==0.8.0
 plotly==4.7.1
 pre-commit==2.3.0
+psycopg2==2.8.6
 pycparser==2.20
 pylint==2.5.2
 pyOpenSSL==19.1.0
