@@ -189,7 +189,7 @@ plot_tempo_climatempo.layout = html.Div(
                 )
             ]
         ),
-        dcc.Interval(id="temp-climatempo-update", interval=9000000, n_intervals=0),
+        dcc.Interval(id="temp-climatempo-update", interval=1800000, n_intervals=0),
     ]
 )
 
@@ -252,7 +252,7 @@ plot_onibus_agora.layout = html.Div(
             color="success",
             inverse=True,
         ),
-        dcc.Interval(id="onibus-agora-update", interval=5000, n_intervals=0),
+        dcc.Interval(id="onibus-agora-update", interval=60000, n_intervals=0),
     ]
 )
 
