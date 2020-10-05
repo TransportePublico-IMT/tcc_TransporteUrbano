@@ -262,7 +262,7 @@ plot_onibus_agora.layout = html.Div(
     [dash.dependencies.Input("direto-dos-trens-update", "n_intervals")],
 )
 def update_direto_dos_trens(self):
-    plot_info = apis.direto_dos_trens("http://unix:/run/gunicorn.sock/api", "/trens/ultimos/")
+    plot_info = apis.direto_dos_trens("http://localhost/api", "/trens/ultimos/")
     data = go.Sunburst(
         labels=plot_info["label_list"],
         parents=plot_info["parent_list"],
@@ -322,7 +322,7 @@ def sp_trans_localizacao(data):
         "/Posicao",
         apiPreUrl="/Login/Autenticar?token=" + os.getenv("OLHOVIVO"),
     )
-    plot_info_paradas = apis.paradas("http://unix:/run/gunicorn.sock", "/api/paradas/")
+    plot_info_paradas = apis.paradas("http://localhost/api", "/paradas/")
     onibus = go.Scattermapbox(
         lat=plot_info_onibus["lat_list"],
         lon=plot_info_onibus["lon_list"],
@@ -386,7 +386,7 @@ def sp_trans_localizacao(data):
         },
     }
     velocidades = apis.sp_trans_velocidade(
-        "http://unix:/run/gunicorn.sock", "/api/onibus-velocidade/ultimos/"
+        "http://localhost/api", "/onibus-velocidade/ultimos/"
     )
     for velocidade in velocidades:
 
@@ -506,7 +506,7 @@ def update_onibus_agora(data):
     [dash.dependencies.Input("temp-climatempo-update", "n_intervals")],
 )
 def update_climatempo(self):
-    url = "http://unix:/run/gunicorn.sock/api"
+    url = "http://localhost/api"
     urlplus = "/climatempo/ultimo/"
     plot_info = apis.climatempo_tempo(url, urlplus)
     temp = float(plot_info["temperatura"])
@@ -534,7 +534,7 @@ def update_climatempo(self):
 )
 def update_cards_lotacao(self):
     vazio = apis.cards_lotacao(
-        "http://unix:/run/gunicorn.sock/api",
+        "http://localhost/api",
         "/onibus-lotacao/ultimos/",
         {
             "lotacao": "vazio",
@@ -542,7 +542,7 @@ def update_cards_lotacao(self):
         },
     )
     normal = apis.cards_lotacao(
-        "http://unix:/run/gunicorn.sock/api",
+        "http://localhost/api",
         "/onibus-lotacao/ultimos/",
         {
             "lotacao": "normal",
@@ -550,7 +550,7 @@ def update_cards_lotacao(self):
         },
     )
     cheio = apis.cards_lotacao(
-        "http://unix:/run/gunicorn.sock/api",
+        "http://localhost/api",
         "/onibus-lotacao/ultimos/",
         {
             "lotacao": "cheio",
