@@ -262,7 +262,7 @@ plot_onibus_agora.layout = html.Div(
     [dash.dependencies.Input("direto-dos-trens-update", "n_intervals")],
 )
 def update_direto_dos_trens(self):
-    plot_info = apis.direto_dos_trens("http://localhost:8000/api", "/trens/ultimos")
+    plot_info = apis.direto_dos_trens("http://localhost:8000/api", "/trens/ultimos/")
     data = go.Sunburst(
         labels=plot_info["label_list"],
         parents=plot_info["parent_list"],

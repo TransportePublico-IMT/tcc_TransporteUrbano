@@ -14,8 +14,10 @@ def api_get_data(
     params = "?"
     for param in paramsDict:
         params += param + "=" + paramsDict[param] + "&"
-    if params == "?":
+    params += "/"
+    if params == "?/":
         params = ""
+    
 
     call = base_url + url + params
     if apiPreUrl != "":
