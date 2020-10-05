@@ -33,7 +33,7 @@ def popular_trens_metros():
         }
         list_trens.append(trem)
 
-    url = "http://localhost:8000/api/trens/"
+    url = "http://localhost/api/trens/"
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",
@@ -64,7 +64,7 @@ def popular_climatempo():
         "sensacao": i["sensation"],
     }
     list_clima.append(clima)
-    url = "http://localhost:8000/api/climatempo/"
+    url = "http://localhost/api/climatempo/"
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",

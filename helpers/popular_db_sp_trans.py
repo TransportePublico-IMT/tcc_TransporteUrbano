@@ -28,7 +28,7 @@ def popular_paradas():
         }
         list_paradas.append(parada)
 
-    url = "http://localhost:8000/api/paradas/"
+    url = "http://localhost/api/paradas/"
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",
@@ -57,7 +57,7 @@ def popular_linhas():
         }
         list_linhas.append(linha)
 
-    url = "http://localhost:8000/api/linhas/"
+    url = "http://localhost/api/linhas/"
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",
@@ -89,7 +89,7 @@ def popular_onibus():
             }
             list_onibus.append(onibus)
 
-    url = "http://localhost:8000/api/onibus-posicao/"
+    url = "http://localhost/api/onibus-posicao/"
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",

@@ -144,7 +144,7 @@ def get_kml_json():
 
 def popular_onibus_velocidade():
     data = get_kml_json()
-    url = "http://localhost:8000/api/onibus-velocidade/"
+    url = "http://localhost/api/onibus-velocidade/"
     headers = {
         'Content-Type': 'application/json',
         'Connection' : 'keep-alive',

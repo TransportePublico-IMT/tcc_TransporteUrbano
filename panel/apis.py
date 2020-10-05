@@ -209,7 +209,7 @@ def onibus_historico():
         data_final = datetime.datetime.combine(dia, datetime.datetime.max.time())
 
         data = api_get_data(
-            "http://localhost:8000/api",
+            "http://localhost/api",
             "/onibus-posicao/quantidade/",
             paramsDict={
                 "data-inicial": data_inicial.strftime("%Y-%m-%d %H:%M:%S"),
