@@ -231,7 +231,8 @@ class OnibusVelocidadeViewSet(ModelViewSet):
             todas_coordenadas = list(chain.from_iterable(todas_coordenadas))
 
             OnibusVelocidadeCoordenadas.objects.all().delete()
-            OnibusVelocidadeCoordenadas.objects.raw("ALTER SEQUENCE onibus_onibusvelocidadecoordenadas_id_seq RESTART WITH 1;")
+            with connection.cursor() as cursor:
+                cursor.execute("ALTER SEQUENCE onibus_onibusvelocidadecoordenadas_id_seq RESTART WITH 1;")
             OnibusVelocidadeCoordenadas.objects.bulk_create(todas_coordenadas)
             return Response({"status": "sucesso"})
         except Exception as e:

@@ -207,6 +207,9 @@ def onibus_historico():
 
         data_inicial = datetime.datetime.combine(dia, datetime.datetime.min.time())
         data_final = datetime.datetime.combine(dia, datetime.datetime.max.time())
+        #somar mais 3 horas para utc
+        data_inicial += datetime.timedelta(hours=3)
+        data_final += datetime.timedelta(hours=3)
 
         data = api_get_data(
             "http://localhost/api",
