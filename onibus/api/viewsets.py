@@ -138,8 +138,8 @@ class OnibusPosicaoViewSet(ModelViewSet):
                 )
                 data_final = datetime.datetime.strptime(data_final, "%Y-%m-%d %H:%M:%S")
 
-            data_inicial = str(data_inicial + datetime.timedelta(hours=3))
-            data_final = str(data_final + datetime.timedelta(hours=3))
+            data_inicial = str(data_inicial - datetime.timedelta(hours=3))
+            data_final = str(data_final - datetime.timedelta(hours=3))
 
             query = f"""SELECT COUNT(id_onibus) AS TOTAL
                         FROM (
@@ -189,7 +189,7 @@ class OnibusVelocidadeViewSet(ModelViewSet):
             k = 0
             id_inicial = ""
             primeira_execucao = True
-            agora_utc = datetime.datetime.now() + timedelta(hours=3)
+            agora_utc = datetime.datetime.now() - timedelta(hours=3)
             time_threshold = agora_utc - timedelta(minutes=1)
             onibus_velocidade = OnibusVelocidade.objects.filter(
                 data_inclusao__gt=time_threshold  # pega valores maiores do que um minuto (que acabou de salvar) atrás, para nao filtrar o db todo
