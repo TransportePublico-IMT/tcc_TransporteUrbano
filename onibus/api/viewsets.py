@@ -171,7 +171,6 @@ class OnibusVelocidadeViewSet(ModelViewSet):
         try:
             lista_onibus_velocidade = []
             todas_coordenadas = []
-            banco_populado = OnibusVelocidadeCoordenadas.objects.all().exists()
 
             for i in request.data["o"]:
                 # cria objetos onibus_velocidade e adiciona em uma lista (não salva no db)
@@ -230,28 +229,10 @@ class OnibusVelocidadeViewSet(ModelViewSet):
 
             # chain remove nested lists e transforma tudo em uma list só
             todas_coordenadas = list(chain.from_iterable(todas_coordenadas))
-            coordenadas_update = []
 
-            if banco_populado:
-                coordenadas_banco = list(OnibusVelocidadeCoordenadas.objects.all())
-                if len(coordenadas_banco) == len(todas_coordenadas):
-                    coordenadas_banco.sort()
-                    todas_coordenadas.sort()
-                    k = 0
-                    for i in todas_coordenadas:
-                        coordenada = coordenadas_banco[k]
-                        coordenada.onibus_velocidade = i.onibus_velocidade
-                        coordenadas_update.append(coordenada)
-                        k += 1
-                    OnibusVelocidadeCoordenadas.objects.bulk_update(
-                        coordenadas_update, ["onibus_velocidade"]
-                    )
-
-                else:
-                    OnibusVelocidadeCoordenadas.objects.all().delete()
-                    OnibusVelocidadeCoordenadas.objects.bulk_create(todas_coordenadas)
-            else:
-                OnibusVelocidadeCoordenadas.objects.bulk_create(todas_coordenadas)
+            OnibusVelocidadeCoordenadas.objects.all().delete()
+            OnibusVelocidadeCoordenadas.objects.raw("ALTER SEQUENCE onibus_onibusvelocidadecoordenadas_id_seq RESTART WITH 1;")
+            OnibusVelocidadeCoordenadas.objects.bulk_create(todas_coordenadas)
             return Response({"status": "sucesso"})
         except Exception as e:
             return Response({"status": "erro: " + type(e).__name__ + ": " + str(e)})

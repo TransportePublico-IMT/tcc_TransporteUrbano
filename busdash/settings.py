@@ -120,8 +120,8 @@ else:
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
             "NAME": "busdash",
-            "USER": "postgres",
-            "PASSWORD": "",
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASS"),
             "HOST": "localhost",
             "PORT": "5432",
         }
