@@ -1,9 +1,7 @@
 import datetime
 import json
 import urllib
-
 import requests
-
 
 def api_get_data(
     apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"

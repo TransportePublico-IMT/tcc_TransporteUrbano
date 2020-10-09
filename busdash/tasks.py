@@ -28,7 +28,7 @@ def create_paradas_if_not_exist():
 
 
 @periodic_task(
-    run_every=(crontab(minute="*/1")),
+    run_every=(crontab(minute="*/5")),
     name="create_linhas_if_not_exist",
     ignore_result=True,
 )
@@ -63,7 +63,7 @@ def save_trens_metros():
 
 
 @periodic_task(
-    run_every=(crontab(minute="*/5")), name="save_clima_tempo", ignore_result=True
+    run_every=(crontab(minute="*/30")), name="save_clima_tempo", ignore_result=True
 )
 def save_clima_tempo():
     status_json = popular_db_apis.popular_climatempo()

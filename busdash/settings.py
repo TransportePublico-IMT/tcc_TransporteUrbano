@@ -104,18 +104,14 @@ WSGI_APPLICATION = "busdash.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-if "RDS_DB_NAME" in os.environ:
+if os.getenv("AMBIENTE").lower() == 'des':
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": os.environ["RDS_DB_NAME"],
-            "USER": os.environ["RDS_USERNAME"],
-            "PASSWORD": os.environ["RDS_PASSWORD"],
-            "HOST": os.environ["RDS_HOSTNAME"],
-            "PORT": os.environ["RDS_PORT"],
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
-else:
+elif os.getenv("AMBIENTE").lower() == 'prod':
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -184,23 +180,22 @@ STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
-#PRODUÇÃO
-CELERY_BROKER_URL = "sqs://"
-CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TASK_SERIALIZER = "json"
-CELERY_DEFAULT_QUEUE = "celery"
-CELERY_RESULT_BACKEND = None  # Disabling the results backend
-CELERY_BROKER_TRANSPORT_OPTIONS = {
-    "region": "us-east-2",
-    "polling_interval": 20,
-}
-CELERY_TIMEZONE = "America/Sao_Paulo"
-
-#LOCAL
-# CELERY_BROKER_URL = "redis://localhost:6379"
-# CELERY_RESULT_BACKEND = "django-db"
-# CELERY_ACCEPT_CONTENT = ["application/json"]
-# CELERY_TASK_SERIALIZER = "json"
-# CELERY_RESULT_SERIALIZER = "json"
-# CELERY_TIMEZONE = "America/Sao_Paulo"
+if os.getenv("AMBIENTE").lower() == 'des':
+    CELERY_BROKER_URL = "redis://localhost:6379"
+    CELERY_RESULT_BACKEND = "django-db"
+    CELERY_ACCEPT_CONTENT = ["application/json"]
+    CELERY_TASK_SERIALIZER = "json"
+    CELERY_RESULT_SERIALIZER = "json"
+    CELERY_TIMEZONE = "America/Sao_Paulo"
+elif os.getenv("AMBIENTE").lower() == 'prod':
+    CELERY_BROKER_URL = "sqs://"
+    CELERY_ACCEPT_CONTENT = ["application/json"]
+    CELERY_RESULT_SERIALIZER = "json"
+    CELERY_TASK_SERIALIZER = "json"
+    CELERY_DEFAULT_QUEUE = "celery"
+    CELERY_RESULT_BACKEND = None  # Disabling the results backend
+    CELERY_BROKER_TRANSPORT_OPTIONS = {
+        "region": "us-east-2",
+        "polling_interval": 20,
+    }
+    CELERY_TIMEZONE = "America/Sao_Paulo"

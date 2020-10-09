@@ -78,13 +78,8 @@ plot_cards_lotacao.layout = html.Div(
                                     html.H5(
                                         "n/a",
                                         id="qtd-vazio",
-                                        className="card-title text-center py-0 mb-1",
-                                        style={"font-size": "42px"},
-                                    ),
-                                    html.P(
-                                        "Atualizado: n/a",
-                                        id="atualizacao-vazio",
-                                        className="card-text text-center",
+                                        className="card-title text-center py-2 mb-1",
+                                        style={"font-size": "47px"},
                                     ),
                                 ],
                                 className="py-2",
@@ -107,13 +102,8 @@ plot_cards_lotacao.layout = html.Div(
                                     html.H5(
                                         "n/a",
                                         id="qtd-normal",
-                                        className="card-title text-center py-0 mb-1",
-                                        style={"font-size": "42px"},
-                                    ),
-                                    html.P(
-                                        "Atualizado: n/a",
-                                        id="atualizacao-normal",
-                                        className="card-text text-center",
+                                        className="card-title text-center py-2 mb-1",
+                                        style={"font-size": "47px"},
                                     ),
                                 ],
                                 className="py-2",
@@ -136,13 +126,8 @@ plot_cards_lotacao.layout = html.Div(
                                     html.H5(
                                         "n/a",
                                         id="qtd-cheio",
-                                        className="card-title text-center py-0 mb-1",
-                                        style={"font-size": "42px"},
-                                    ),
-                                    html.P(
-                                        "Atualizado: n/a",
-                                        id="atualizacao-cheio",
-                                        className="card-text text-center",
+                                        className="card-title text-center py-2 mb-1",
+                                        style={"font-size": "47px"},
                                     ),
                                 ],
                                 className="py-2",
@@ -526,9 +511,6 @@ def update_climatempo(self):
         dash.dependencies.Output("qtd-vazio", "children"),
         dash.dependencies.Output("qtd-normal", "children"),
         dash.dependencies.Output("qtd-cheio", "children"),
-        dash.dependencies.Output("atualizacao-vazio", "children"),
-        dash.dependencies.Output("atualizacao-normal", "children"),
-        dash.dependencies.Output("atualizacao-cheio", "children"),
     ],
     [dash.dependencies.Input("cards-lotacao-update", "n_intervals")],
 )
@@ -557,13 +539,8 @@ def update_cards_lotacao(self):
             # "intervalo": "1",
         },
     )
-    now = datetime.datetime.now()
-    horario = "Atualizado: " + now.strftime("%H:%M:%S")
     return [
         html.Span(len(vazio)),
         html.Span(len(normal)),
-        html.Span(len(cheio)),
-        html.Span(horario),
-        html.Span(horario),
-        html.Span(horario),
+        html.Span(len(cheio))
     ]

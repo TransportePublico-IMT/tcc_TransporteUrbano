@@ -24,6 +24,13 @@ from .serializers import (
     OnibusVelocidadeSerializer,
 )
 
+import os
+from os.path import dirname, join
+from dotenv import load_dotenv
+
+dotenv_path = join(dirname(__file__), "../.ENV")
+load_dotenv(dotenv_path)
+
 
 class OnibusLotacaoViewSet(ModelViewSet):
     serializer_class = OnibusLotacaoSerializer
@@ -78,7 +85,6 @@ class OnibusLotacaoViewSet(ModelViewSet):
             serializer = OnibusLotacaoSerializer(queryset, many=True)
             return Response(serializer.data)
         else:
-            # queryset = OnibusLotacao.objects.order_by('-data_inclusao').distinct('id_onibus')
             queryset = OnibusLotacao.objects.raw(
                 f"""SELECT *
                                                     FROM onibus_onibuslotacao
@@ -138,8 +144,12 @@ class OnibusPosicaoViewSet(ModelViewSet):
                 )
                 data_final = datetime.datetime.strptime(data_final, "%Y-%m-%d %H:%M:%S")
 
-            data_inicial = str(data_inicial)
-            data_final = str(data_final)
+            if os.getenv("AMBIENTE").lower() == 'des':
+                data_inicial = str(data_inicial + datetime.timedelta(hours=3))
+                data_final = str(data_final + datetime.timedelta(hours=3))
+            elif os.getenv("AMBIENTE").lower() == 'prod':
+                data_inicial = str(data_inicial)
+                data_final = str(data_final)
 
             query = f"""SELECT COUNT(id_onibus) AS TOTAL
                         FROM (
@@ -188,7 +198,10 @@ class OnibusVelocidadeViewSet(ModelViewSet):
             k = 0
             id_inicial = ""
             primeira_execucao = True
-            agora_utc = datetime.datetime.now()
+            if os.getenv("AMBIENTE").lower() == 'des':
+                agora_utc = datetime.datetime.now() + timedelta(hours=3)
+            elif os.getenv("AMBIENTE").lower() == 'prod':
+                agora_utc = datetime.datetime.now()
             time_threshold = agora_utc - timedelta(minutes=1)
             onibus_velocidade = OnibusVelocidade.objects.filter(
                 data_inclusao__gt=time_threshold  # pega valores maiores do que um minuto (que acabou de salvar) atrás, para nao filtrar o db todo
@@ -232,7 +245,11 @@ class OnibusVelocidadeViewSet(ModelViewSet):
 
             OnibusVelocidadeCoordenadas.objects.all().delete()
             with connection.cursor() as cursor:
-                cursor.execute("ALTER SEQUENCE onibus_onibusvelocidadecoordenadas_id_seq RESTART WITH 1;")
+                if os.getenv("AMBIENTE").lower() == 'des':
+                    cursor.execute("delete from onibus_onibusvelocidadecoordenadas;")
+                    cursor.execute("delete from sqlite_sequence where name='onibus_onibusvelocidadecoordenadas';")
+                if os.getenv("AMBIENTE").lower() == 'prod':
+                    cursor.execute("ALTER SEQUENCE onibus_onibusvelocidadecoordenadas_id_seq RESTART WITH 1;")
             OnibusVelocidadeCoordenadas.objects.bulk_create(todas_coordenadas)
             return Response({"status": "sucesso"})
         except Exception as e:
@@ -240,7 +257,6 @@ class OnibusVelocidadeViewSet(ModelViewSet):
 
     @action(methods=["GET"], detail=False)
     def ultimos(self, request):
-        # queryset = OnibusLotacao.objects.order_by('-data_inclusao').distinct('id_onibus')
         queryset = OnibusVelocidade.objects.raw(
             f"""SELECT *
                 FROM onibus_onibusvelocidade
