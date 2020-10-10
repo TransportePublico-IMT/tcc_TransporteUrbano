@@ -3,12 +3,12 @@ anyjson==0.3.3
 appdirs==1.4.4
 asgiref==3.2.7
 astroid==2.4.1
-attrs==19.3.0
+attrs==20.1.0
 beautifulsoup4==4.9.1
 billiard==3.6.3.0
 black==19.10b0
-boto3==1.14.46
-botocore==1.17.46
+boto3==1.15.6
+botocore==1.18.6
 Brotli==1.0.7
 celery==4.4.7
 certifi==2020.4.5.1
@@ -31,8 +31,8 @@ django-bootstrap4==2.2.0
 django-celery-results==1.2.1
 django-plotly-dash==1.3.1
 djangorestframework==3.11.0
+djangorestframework-datatables==0.5.2
 dnspython==1.16.0
-docutils==0.15.2
 dpd-components==0.1.0
 dpd-static-support==0.0.5
 eventlet==0.26.1
@@ -60,7 +60,7 @@ pandas==1.0.3
 pathspec==0.8.0
 plotly==4.7.1
 pre-commit==2.3.0
-psycopg2-binary==2.8.5
+psycopg2==2.8.6
 pycparser==2.20
 pylint==2.5.2
 pyOpenSSL==19.1.0
@@ -84,6 +84,7 @@ virtualenv==20.0.20
 Werkzeug==1.0.1
 whitenoise==5.1.0
 wrapt==1.12.1
+xmltodict==0.12.0
 zipp==3.1.0
 zope.event==4.4
 zope.interface==5.1.0

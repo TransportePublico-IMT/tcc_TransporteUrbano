@@ -9,9 +9,8 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>{{page_title}}</title>
-    <link rel="shortcut icon" type="image/png" href="{% static 'logo.png' %}"/>
+    {% comment %} <link rel="shortcut icon" type="image/png" href="{% static 'logo.png' %}"/> {% endcomment %}
     <link rel="stylesheet" href="{% static 'css/teste.css' %}">
-    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
@@ -19,15 +18,13 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script> -->
-    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark pl-0">
         <a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'logo.png' %}" class="d-inline-block" alt="logo"/>
-            <!-- <span class="ml-1">SA-Trans</span> -->
+            {% comment %} <img src="{% static 'logo.png' %}" class="d-inline-block" alt="logo"/> {% endcomment %}
+            <span class="ml-1">Transporte Público</span>
         </a>
 
         <button class="btn btn-link btn-sm order-1 order-lg-0 pl-0"

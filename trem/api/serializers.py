@@ -12,5 +12,5 @@ class TremSerializer(ModelSerializer):
             "data_ocorrencia",
             "descricao",
             "ultima_atualizacao",
-            "stiaucao",
+            "situacao",
         )

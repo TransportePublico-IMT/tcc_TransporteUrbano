@@ -1,6 +1,12 @@
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from onibus.models import OnibusLotacao
+from onibus.models import (
+    OnibusLotacao,
+    OnibusPosicao,
+    OnibusVelocidade,
+    OnibusVelocidadeCoordenadas,
+)
 
 
 class OnibusLotacaoSerializer(ModelSerializer):
@@ -19,7 +25,7 @@ class OnibusLotacaoSerializer(ModelSerializer):
 
 class OnibusPosicaoSerializer(ModelSerializer):
     class Meta:
-        model = OnibusLotacao
+        model = OnibusPosicao
         fields = (
             "id",
             "id_onibus",
@@ -31,3 +37,30 @@ class OnibusPosicaoSerializer(ModelSerializer):
             "id_linha",
             "frota",
         )
+
+
+class OnibusVelocidadeCoordenadasSerializer(ModelSerializer):
+    class Meta:
+        model = OnibusVelocidadeCoordenadas
+        fields = ("latitude", "longitude", "id")
+
+
+class OnibusVelocidadeSerializer(ModelSerializer):
+    coordenadas = OnibusVelocidadeCoordenadasSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = OnibusVelocidade
+        fields = (
+            "id",
+            "nome",
+            "vel_trecho",
+            "vel_via",
+            "trecho",
+            "extensao",
+            "tempo",
+            "coordenadas",
+        )
+
+    def get_coordenadas(self, instance):
+        coordenadas = instance.coordenadas.all().order_by('id')
+        return OnibusVelocidadeCoordenadasSerializer(coordenadas, many=True).data

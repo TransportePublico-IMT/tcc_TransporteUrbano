@@ -9,4 +9,4 @@ class Linha(models.Model):
     letreiro_origem = models.CharField(max_length=80)
 
     def __str__(self):
-        return str(self.letreiro)
+        return str(self.id_linha)

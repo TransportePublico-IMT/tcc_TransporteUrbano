@@ -1,16 +1,18 @@
 import time
+from datetime import datetime
 
+from celery import shared_task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 
-from helpers import popular_db_apis, popular_db_sp_trans
+from helpers import popular_db_apis, popular_db_sp_trans, processar_kmz
 
 # celery -A busdash worker --pool=eventlet -l info
+# celery -A busdash beat -l info
 
 
 class TaskFailure(Exception):
     pass
-
 
 @periodic_task(
     run_every=(crontab(minute="*/30")),
@@ -26,7 +28,7 @@ def create_paradas_if_not_exist():
 
 
 @periodic_task(
-    run_every=(crontab(minute="*/1")),
+    run_every=(crontab(minute="*/5")),
     name="create_linhas_if_not_exist",
     ignore_result=True,
 )
@@ -50,7 +52,7 @@ def save_onibus_posicao():
 
 
 @periodic_task(
-    run_every=(crontab(minute="*/1")), name="save_trens_metros", ignore_result=True
+    run_every=(crontab(minute="*/10")), name="save_trens_metros", ignore_result=True
 )
 def save_trens_metros():
     status_json = popular_db_apis.popular_trens_metros()
@@ -61,10 +63,23 @@ def save_trens_metros():
 
 
 @periodic_task(
-    run_every=(crontab(minute="*/1")), name="save_clima_tempo", ignore_result=True
+    run_every=(crontab(minute="*/30")), name="save_clima_tempo", ignore_result=True
 )
 def save_clima_tempo():
     status_json = popular_db_apis.popular_climatempo()
+    status = status_json["status"]
+    if status.startswith("erro"):
+        raise TaskFailure(status)
+    return status
+
+
+@periodic_task(
+    run_every=(crontab(minute="*/15")),
+    name="save_onibus_velocidade",
+    ignore_result=True,
+)
+def save_onibus_velocidade():
+    status_json = processar_kmz.popular_onibus_velocidade()
     status = status_json["status"]
     if status.startswith("erro"):
         raise TaskFailure(status)

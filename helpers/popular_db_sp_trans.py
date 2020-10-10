@@ -8,13 +8,21 @@ from linha.models import Linha
 from panel.apis import api_get_data
 from parada.models import Parada
 
+from dotenv import load_dotenv
+import os
+from os.path import join, dirname
+
+# Create .env file path.
+dotenv_path = join(dirname(__file__), '../.ENV')
+# Load file from the path.
+load_dotenv(dotenv_path)
 
 def popular_paradas():
     data = api_get_data(
         "http://api.olhovivo.sptrans.com.br/v2.1",
         "/Parada/Buscar",
         paramsDict={"termosBusca": ""},
-        apiPreUrl="/Login/Autenticar?token=d56f9613a83a7233521ae5413765d15dae0b499967f2a12384ce2f7cd2fe62a9",
+        apiPreUrl="/Login/Autenticar?token="+os.getenv('OLHOVIVO'),
     )
 
     list_paradas = []
@@ -28,7 +36,7 @@ def popular_paradas():
         }
         list_paradas.append(parada)
 
-    url = "http://localhost:8000/api/paradas/"
+    url = "http://localhost/api/paradas/"
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",
@@ -44,7 +52,7 @@ def popular_linhas():
     data = api_get_data(
         "http://api.olhovivo.sptrans.com.br/v2.1",
         "/Posicao",
-        apiPreUrl="/Login/Autenticar?token=d56f9613a83a7233521ae5413765d15dae0b499967f2a12384ce2f7cd2fe62a9",
+        apiPreUrl="/Login/Autenticar?token="+os.getenv('OLHOVIVO'),
     )
     list_linhas = []
     for i in data["l"]:
@@ -57,7 +65,7 @@ def popular_linhas():
         }
         list_linhas.append(linha)
 
-    url = "http://localhost:8000/api/linhas/"
+    url = "http://localhost/api/linhas/"
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",
@@ -73,7 +81,7 @@ def popular_onibus():
     data = api_get_data(
         "http://api.olhovivo.sptrans.com.br/v2.1",
         "/Posicao",
-        apiPreUrl="/Login/Autenticar?token=d56f9613a83a7233521ae5413765d15dae0b499967f2a12384ce2f7cd2fe62a9",
+        apiPreUrl="/Login/Autenticar?token="+os.getenv('OLHOVIVO'),
     )
     list_onibus = []
     for i in data["l"]:
@@ -85,11 +93,11 @@ def popular_onibus():
                 "latitude": y["py"],
                 "longitude": y["px"],
                 "id_linha": i["cl"],
-                "frota": i["sl"],
+                "frota": i["qv"],
             }
             list_onibus.append(onibus)
 
-    url = "http://localhost:8000/api/onibus-posicao/"
+    url = "http://localhost/api/onibus-posicao/"
     headers = {
         "Content-Type": "application/json",
         "Connection": "keep-alive",
