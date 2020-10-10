@@ -12,7 +12,7 @@ option.add_argument(" — incognito")
 option.headless = True
 
 browser = webdriver.Chrome(
-    executable_path=os.getcwd() + "/chromeDriver/chromedrivermac", options=option
+    executable_path=r"D:\Documentos\GitProjects\tcc_TransporteUrbano\chromedriver\chromedriver.exe", options=option
 )
 
 browser.get(
@@ -60,15 +60,17 @@ enderecos = []
 for x in datas:
     enderecos.append(getAdress(x))
 
-print("Eventos: \n")
-print(evento, "\n")
-print(len(evento))
-print("Links: \n")
-print(links, "\n")
-print(len(links))
-print("Datas: \n")
-print(datas, "\n")
-print(len(datas))
-print("Enderecos: \n")
-print(enderecos, "\n")
-print(len(enderecos))
+ret = []
+x = 0
+for i in evento:
+    obj = {}
+    obj["nome"] = evento[x]
+    obj["link"] = links[x]
+    obj["data"] = datas[x]
+    obj["endereco"] = enderecos[x][0]
+    obj["latitude"] = enderecos[x][1]
+    obj["longitude"] = enderecos[x][2]
+    ret.append(obj)
+    x += 1
+
+print(ret)

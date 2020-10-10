@@ -5,6 +5,7 @@ from os.path import dirname, join
 
 import requests
 from dotenv import load_dotenv
+from helpers.processar_eventos import get_eventos
 
 from panel.apis import api_get_data
 from trem.models import Trem
@@ -71,6 +72,20 @@ def popular_climatempo():
         "Accept": "*/*",
     }
     data = {"ct": list_clima}
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+
+    return r.json()
+
+
+def popular_eventos():
+    eventos = get_eventos()
+    url = "http://localhost/api/eventos/"
+    headers = {
+        "Content-Type": "application/json",
+        "Connection": "keep-alive",
+        "Accept": "*/*",
+    }
+    data = {"e": eventos}
     r = requests.post(url, data=json.dumps(data), headers=headers)
 
     return r.json()

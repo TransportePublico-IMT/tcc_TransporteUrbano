@@ -26,7 +26,6 @@ def create_paradas_if_not_exist():
         raise TaskFailure(status)
     return status
 
-
 @periodic_task(
     run_every=(crontab(minute="*/5")),
     name="create_linhas_if_not_exist",
@@ -39,7 +38,6 @@ def create_linhas_if_not_exist():
         raise TaskFailure(status)
     return status
 
-
 @periodic_task(
     run_every=(crontab(minute="*/5")), name="save_onibus_posicao", ignore_result=True
 )
@@ -49,7 +47,6 @@ def save_onibus_posicao():
     if status.startswith("erro"):
         raise TaskFailure(status)
     return status
-
 
 @periodic_task(
     run_every=(crontab(minute="*/10")), name="save_trens_metros", ignore_result=True
@@ -61,7 +58,6 @@ def save_trens_metros():
         raise TaskFailure(status)
     return status
 
-
 @periodic_task(
     run_every=(crontab(minute="*/30")), name="save_clima_tempo", ignore_result=True
 )
@@ -72,7 +68,6 @@ def save_clima_tempo():
         raise TaskFailure(status)
     return status
 
-
 @periodic_task(
     run_every=(crontab(minute="*/15")),
     name="save_onibus_velocidade",
@@ -80,6 +75,18 @@ def save_clima_tempo():
 )
 def save_onibus_velocidade():
     status_json = processar_kmz.popular_onibus_velocidade()
+    status = status_json["status"]
+    if status.startswith("erro"):
+        raise TaskFailure(status)
+    return status
+
+@periodic_task(
+    run_every=(crontab(minute="*/2")),
+    name="save_eventos",
+    ignore_result=True,
+)
+def save_eventos():
+    status_json = popular_db_apis.popular_eventos()
     status = status_json["status"]
     if status.startswith("erro"):
         raise TaskFailure(status)
