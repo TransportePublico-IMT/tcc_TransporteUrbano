@@ -186,6 +186,22 @@ def paradas(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="po
     }
     return ret
 
+def eventos(apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"):
+    data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
+    lon_list = []
+    lat_list = []
+    hover_text_list = []
+    for evento in data:
+        lat_list.append(evento["latitude"])
+        lon_list.append(evento["longitude"])
+        hover_text_list.append(evento["nome"] + "<br>" + evento["data_info"])
+
+    ret = {
+        "lon_list": lon_list,
+        "lat_list": lat_list,
+        "hover_text_list": hover_text_list,
+    }
+    return ret
 
 def onibus_historico():
     dias_list = []

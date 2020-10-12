@@ -1,5 +1,6 @@
 import os
 from os.path import dirname, join
+import datetime
 
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -28,9 +29,48 @@ def get_adress(nome):
         endereco = [None, None, None]
     return endereco
 
+def get_date(string):
+    dict_meses = {
+        "janeiro": "01",
+        "fevereiro": "02",
+        "março": "03",
+        "abril": "04",
+        "maio": "05",
+        "junho": "06",
+        "julho": "07",
+        "agosto": "08",
+        "setembro": "09",
+        "outubro": "10",
+        "novembro": "11",
+        "dezembro": "12"
+    }
+    data = []
+    word_list = string.replace("/", " ").split(" ")
+    for i in word_list:
+        if i.isdigit():
+            data.append(i) #dia
+        if i in dict_meses:
+            data.append(dict_meses[i]) #mes
+    try:
+        ultimo_elemento = len(data[-1:][0])
+    except:
+        ultimo_elemento = 5
+    if len(data) == 2 or ultimo_elemento < 4:
+        now = datetime.datetime.now()
+        data.append(str(now.year)) #ano
+    if len(data) > 3:
+        data = data[-3:]
+    if len(data) == 3:
+        data_str = '-'.join(list(reversed(data)))
+        return data_str
+    else:
+        return None
+
 def get_eventos():
     option = webdriver.ChromeOptions()
     option.add_argument(" — incognito")
+    option.add_argument('log-level=3')
+    option.add_experimental_option('excludeSwitches', ['enable-logging'])
     option.headless = True
 
     browser = webdriver.Chrome(
@@ -86,7 +126,8 @@ def get_eventos():
         obj = {}
         obj["nome"] = evento[x]
         obj["link"] = links[x]
-        obj["data"] = datas[x]
+        obj["data_info"] = datas[x]
+        obj["data"] = get_date(datas[x])
         obj["endereco"] = enderecos[x][0]
         obj["latitude"] = enderecos[x][1]
         obj["longitude"] = enderecos[x][2]
