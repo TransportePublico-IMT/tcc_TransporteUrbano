@@ -7,8 +7,9 @@
 # Licensed under the GPLv3 license
 # Copyright (c) 2017, Neil Freeman <contact@fakeisthenewreal.org>
 
-from . import api, models
+from . import api
+from . import models
 from .api import TransitFeeds
 
-__version__ = "0.1.1"
-__all__ = ["api", "models"]
+__version__ = '0.1.1'
+__all__ = ['api', 'models']
