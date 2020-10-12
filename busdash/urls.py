@@ -6,6 +6,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from climatempo.api.viewsets import ClimaTempoViewSet
+from evento.api.viewsets import EventoViewSet
 from linha.api.viewsets import LinhaViewSet
 from onibus.api.viewsets import (
     OnibusLotacaoViewSet,
@@ -26,6 +27,7 @@ router.register("linhas", LinhaViewSet, basename="Linha")
 router.register("paradas", ParadaViewSet, basename="Parada")
 router.register("trens", TremViewSet, basename="Trem")
 router.register("climatempo", ClimaTempoViewSet, basename="ClimaTempo")
+router.register("eventos", EventoViewSet, basename="Evento")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

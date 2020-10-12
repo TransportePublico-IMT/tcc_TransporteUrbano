@@ -308,14 +308,16 @@ def sp_trans_localizacao(data):
         apiPreUrl="/Login/Autenticar?token=" + os.getenv("OLHOVIVO"),
     )
     plot_info_paradas = apis.paradas("http://localhost/api", "/paradas/")
+    plot_info_eventos = apis.eventos("http://localhost/api", "/eventos/proximos/")
+
     onibus = go.Scattermapbox(
         lat=plot_info_onibus["lat_list"],
         lon=plot_info_onibus["lon_list"],
         hovertext=plot_info_onibus["hover_text_list"],
-        mode="markers+text",
+        mode="markers",
         hoverinfo="text",
         name="Ônibus",
-        marker=go.scattermapbox.Marker(size=10, color="#212529", opacity=1),
+        marker=go.scattermapbox.Marker(size=9, color="#212529", opacity=1),
     )
     lista_traces.append(onibus)
 
@@ -328,9 +330,20 @@ def sp_trans_localizacao(data):
         textposition="bottom center",
         text=plot_info_paradas["hover_text_list"],
         name="Parada",
-        marker=go.scattermapbox.Marker(size=14, color="#007bff", opacity=1),
+        marker=go.scattermapbox.Marker(size=12, color="#007bff", opacity=1),
     )
     lista_traces.append(paradas)
+
+    eventos = go.Scattermapbox(
+        lat=plot_info_eventos["lat_list"],
+        lon=plot_info_eventos["lon_list"],
+        hovertext=plot_info_eventos["hover_text_list"],
+        mode="markers",
+        hoverinfo="text",
+        name="Evento",
+        marker=go.scattermapbox.Marker(size=16, color="#FF1493", opacity=1),
+    )
+    lista_traces.append(eventos)
 
     traces = {
         "verde": {

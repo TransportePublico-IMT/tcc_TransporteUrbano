@@ -3,6 +3,45 @@ $(document).ready(function() {
     $(this).attr('scrolling','no');
     });
 
+    var portugues = {
+        "sEmptyTable": "Nenhum registro encontrado",
+        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+        "sInfoPostFix": "",
+        "sInfoThousands": ".",
+        "sLengthMenu": "_MENU_ resultados por página",
+        "sLoadingRecords": "Carregando...",
+        "sProcessing": "Processando...",
+        "sZeroRecords": "Nenhum registro encontrado",
+        "sSearch": "Pesquisar",
+        "oPaginate": {
+            "sNext": "Próximo",
+            "sPrevious": "Anterior",
+            "sFirst": "Primeiro",
+            "sLast": "Último"
+        },
+        "oAria": {
+            "sSortAscending": ": Ordenar colunas de forma ascendente",
+            "sSortDescending": ": Ordenar colunas de forma descendente"
+        },
+        "select": {
+            "rows": {
+                "_": "Selecionado %d linhas",
+                "0": "Nenhuma linha selecionada",
+                "1": "Selecionado 1 linha"
+            }
+        },
+        "buttons": {
+            "copy": "Copiar para a área de transferência",
+            "copyTitle": "Cópia bem sucedida",
+            "copySuccess": {
+                "1": "Uma linha copiada com sucesso",
+                "_": "%d linhas copiadas com sucesso"
+            }
+        }
+    }
+
     var table = $("#table-onibus-lotacao").DataTable({
         //"ajax": {url:"/api/onibus-lotacao/ultimos/?intervalo=1", dataSrc:""},
         "ajax": {url:"/api/onibus-lotacao/ultimos/", dataSrc:""},
@@ -19,47 +58,36 @@ $(document).ready(function() {
             render: $.fn.dataTable.render.moment('YYYY-MM-DDTHH:mm:ss.SSSSSSZ', 'DD/MM/YYYY - HH:mm:ss')
         }],
         "scrollY": "160px",
-        "oLanguage": {
-            "sEmptyTable": "Nenhum registro encontrado",
-            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-            "sInfoPostFix": "",
-            "sInfoThousands": ".",
-            "sLengthMenu": "_MENU_ resultados por página",
-            "sLoadingRecords": "Carregando...",
-            "sProcessing": "Processando...",
-            "sZeroRecords": "Nenhum registro encontrado",
-            "sSearch": "Pesquisar",
-            "oPaginate": {
-                "sNext": "Próximo",
-                "sPrevious": "Anterior",
-                "sFirst": "Primeiro",
-                "sLast": "Último"
-            },
-            "oAria": {
-                "sSortAscending": ": Ordenar colunas de forma ascendente",
-                "sSortDescending": ": Ordenar colunas de forma descendente"
-            },
-            "select": {
-                "rows": {
-                    "_": "Selecionado %d linhas",
-                    "0": "Nenhuma linha selecionada",
-                    "1": "Selecionado 1 linha"
-                }
-            },
-            "buttons": {
-                "copy": "Copiar para a área de transferência",
-                "copyTitle": "Cópia bem sucedida",
-                "copySuccess": {
-                    "1": "Uma linha copiada com sucesso",
-                    "_": "%d linhas copiadas com sucesso"
+        "oLanguage": portugues
+    });
+
+    var tableEventos = $("#table-eventos").DataTable({
+        //"ajax": {url:"/api/onibus-lotacao/ultimos/?intervalo=1", dataSrc:""},
+        "ajax": {url:"/api/eventos/", dataSrc:""},
+        "columns": [
+            {"data": "nome", "width": "25%"},
+            {"data": "endereco", "width": "25%"},
+            {"data": "data_info", "width": "25%"},
+            {"data": "link", "width": "25%",
+                "render": function(data, type, row, meta){
+                    if(type === 'display'){
+                        data = '<a href="' + data + '">' + data + '</a>';
+                    }
+        
+                    return data;
                 }
             }
-        }
-  });
-  setInterval(function(){
-      table.ajax.reload(null, false);
-  },5000);
+        ],
+        "scrollY": "300px",
+        "oLanguage": portugues
+    });
+
+    setInterval(function(){
+        tableEventos.ajax.reload(null, false);
+    },5000);
+
+    setInterval(function(){
+        table.ajax.reload(null, false);
+    },5000);
 
 })
