@@ -1,0 +1,98 @@
+{% extends 'panel/base.html' %}
+{% block content %}
+{% load static %}
+{% load plotly_dash %}
+<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+<script src="https:////cdn.datatables.net/plug-ins/1.10.21/dataRender/datetime.js" crossorigin="anonymous"></script>
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Fluxo SP-Trans</div>
+            <div class="card-body p-1" style="height: 461px;" >
+                {% plotly_app name="LocSptrans" ratio=0.28 %}
+            </div>
+        </div>
+    </div>
+    <div class="col-7">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-users mr-1"></i>Lotação última hora</div>
+            <div class="card-body p-2" style="height: 150px;" >
+                {% plotly_app_bootstrap name="CardsLotacao" aspect="21by9"%}
+            </div>
+            <div class="p-2">
+                <table id="table-onibus-lotacao" class="table table-striped table-bordered" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>ID Onibus</th>
+                            <th>ID Linha</th>
+                            <th>Lotação</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Data Inclusão</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Eventos em SP</div>
+            <div class="card-body p-1" style="height: 461px;" >
+                <div class="p-2">
+                    <table id="table-eventos" class="table table-striped table-bordered" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th><i class="far fa-address-card"></i> Nome</th>
+                                <th><i class="fas fa-map-marker-alt"></i> Endereço</th>
+                                <th><i class="far fa-calendar-alt"></i> Data</th>
+                                <th><i class="fas fa-mouse-pointer"></i> Link</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-7" style="height: 270px;">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-history mr-1"></i>Ônibus em circulação</div>
+            <div class="card-body p-2" style="height: 270px;" >
+                <div class="row">
+                    <div class="col-3">
+                        {% plotly_app name="OnibusAgora" ratio=1.2 %}
+                    </div>
+                    <div class="col-9">
+                        {% plotly_app name="HistoricoOnibus" ratio=0.36 %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-train mr-1"></i>Situação Trens e Metrôs</div>
+            <div class="card-body p-1" style="height: 270px;" >
+                {% plotly_app name="DiretoDosTrens" ratio=0.7 %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-thermometer-half mr-1"></i>Temperatura (°C)</div>
+            <div class="card-body p-1" style="height: 270px;">
+                <div class="text-center" id="climatempo">
+                    {% plotly_app name="ClimaTemp" ratio=1.1 %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'scripts/custom.js' %}"></script>
+{% endblock %}
