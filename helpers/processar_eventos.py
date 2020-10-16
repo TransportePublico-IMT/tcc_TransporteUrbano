@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from geopy.geocoders import GoogleV3
 
 # Create .env file path.
-dotenv_path = join(dirname(__file__), "../.env")
+dotenv_path = join(dirname(__file__), "../.ENV")
 load_dotenv(dotenv_path)
 API = os.getenv("GOOGLE_MAPS")
 
@@ -68,13 +68,20 @@ def get_date(string):
 
 def get_eventos():
     option = webdriver.ChromeOptions()
+    option.add_argument('--no-sandbox')
+    option.add_argument('--disable-dev-shm-usage')
+    option.add_argument('--headless')
     option.add_argument(" — incognito")
     option.add_argument('log-level=3')
     option.add_experimental_option('excludeSwitches', ['enable-logging'])
-    option.headless = True
+
+    if os.getenv("AMBIENTE").lower() == 'des':
+        chromedriver_path = os.getcwd() + "\\chromedriver\\chromedriver.exe"
+    elif os.getenv("AMBIENTE").lower() == 'prod':
+        chromedriver_path = os.getcwd() + "/chromedriver/chromedriver"
 
     browser = webdriver.Chrome(
-        executable_path=os.getcwd() + "\\chromedriver\\chromedriver.exe",
+        executable_path=chromedriver_path,
         options=option
     )
     browser.get(
@@ -115,6 +122,9 @@ def get_eventos():
             elif "Săo Paulo" in x.text:
                 data = x.text
         datas.append(data)
+
+    browser.close()
+    browser.quit()
 
     enderecos = []
     for x in datas:

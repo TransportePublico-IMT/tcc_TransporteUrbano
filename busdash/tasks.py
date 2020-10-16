@@ -39,7 +39,7 @@ def create_linhas_if_not_exist():
     return status
 
 @periodic_task(
-    run_every=(crontab(minute="*/5")), name="save_onibus_posicao", ignore_result=True
+    run_every=(crontab(minute="*/30")), name="save_onibus_posicao", ignore_result=True
 )
 def save_onibus_posicao():
     status_json = popular_db_sp_trans.popular_onibus()
@@ -81,7 +81,7 @@ def save_onibus_velocidade():
     return status
 
 @periodic_task(
-    run_every=(crontab(minute="*/2")),
+    run_every=(crontab(minute="*/43200")),
     name="save_eventos",
     ignore_result=True,
 )

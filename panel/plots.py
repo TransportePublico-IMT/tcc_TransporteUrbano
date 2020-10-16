@@ -48,7 +48,7 @@ plot_onibus_historico.layout = html.Div(
             },
         ),
         dcc.Graph(id="historico-onibus"),
-        dcc.Interval(id="historico-onibus-update", interval=20000, n_intervals=0),
+        dcc.Interval(id="historico-onibus-update", interval=60000, n_intervals=0),
     ]
 )
 
