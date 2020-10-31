@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "trem",
     "climatempo",
     "evento",
+    "intervalo",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
     "bootstrap4",
     "django_celery_results",

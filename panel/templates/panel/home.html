@@ -17,6 +17,14 @@
             </div>
         </div>
     </div>
+    <div class="col-12">
+        <div class="card mb-3">
+            <div class="card-header py-1 h6 text-muted"><i class="fas fa-map-marker-alt mr-1"></i>Relação velocidade das linhas com quantidade de ônibus</div>
+            <div class="card-body p-1" style="height: 305px;" >
+                {% plotly_app name="HistoricoLinhas" ratio=0.18 %}
+            </div>
+        </div>
+    </div>
     <div class="col-7">
         <div class="card mb-3">
             <div class="card-header py-1 h6 text-muted"><i class="fas fa-users mr-1"></i>Lotação última hora</div>

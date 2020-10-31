@@ -249,8 +249,14 @@ def climatempo_tempo(
     ret = data
     return ret
 
-
 def cards_lotacao(
+    apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"
+):
+    data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)
+    ret = data
+    return ret
+
+def historico_linhas(
     apiBaseUrl, apiUrl, paramsDict={}, apiPreUrl="", apiPreUrlMethod="post"
 ):
     data = api_get_data(apiBaseUrl, apiUrl, paramsDict, apiPreUrl, apiPreUrlMethod)

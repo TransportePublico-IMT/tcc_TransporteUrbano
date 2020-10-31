@@ -139,9 +139,7 @@ class OnibusPosicaoViewSet(ModelViewSet):
                     today, datetime.datetime.max.time()
                 )
             else:
-                data_inicial = datetime.datetime.strptime(
-                    data_inicial, "%Y-%m-%d %H:%M:%S"
-                )
+                data_inicial = datetime.datetime.strptime(data_inicial, "%Y-%m-%d %H:%M:%S")
                 data_final = datetime.datetime.strptime(data_final, "%Y-%m-%d %H:%M:%S")
 
             if os.getenv("AMBIENTE").lower() == 'des':
@@ -269,3 +267,113 @@ class OnibusVelocidadeViewSet(ModelViewSet):
 
         serializer = OnibusVelocidadeSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(methods=["GET"], detail=False)
+    def historico(self, request):
+        try:
+            data_inicial = self.request.query_params.get("data-inicial", None)
+            data_final = self.request.query_params.get("data-final", None)
+
+            if data_inicial is None or data_final is None:
+                today = datetime.date.today()
+                data_inicial = datetime.datetime.combine(
+                    today, datetime.datetime.min.time()
+                )
+                data_final = datetime.datetime.combine(
+                    today, datetime.datetime.max.time()
+                )
+            else:
+                data_inicial = datetime.datetime.strptime(data_inicial, "%Y-%m-%d %H:%M:%S")
+                data_final = datetime.datetime.strptime(data_final, "%Y-%m-%d %H:%M:%S")
+
+            if os.getenv("AMBIENTE").lower() == 'des':
+                data_inicial = str(data_inicial + datetime.timedelta(hours=3))
+                data_final = str(data_final + datetime.timedelta(hours=3))
+            elif os.getenv("AMBIENTE").lower() == 'prod':
+                data_inicial = str(data_inicial)
+                data_final = str(data_final)
+
+            query = f"""SELECT strftime('%H:%M', T1.INTERVALO) AS INTERVALO,
+                        COALESCE(T2.VERDE, 0) AS VERDE,
+                        COALESCE(T2.AMARELO, 0) AS AMARELO,
+                        COALESCE(T2.VERMELHO, 0) AS VERMELHO,
+                        COALESCE(T3.ONIBUS_CIRCULANDO, 0) AS ONIBUS_CIRCULANDO
+                        FROM intervalo_intervalo T1
+                        LEFT JOIN( 
+                            select INTERVALO,
+                            SUM(VERDE) AS VERDE,
+                            SUM(AMARELO) AS AMARELO,
+                            SUM(VERMELHO) AS VERMELHO
+                            from(
+                                SELECT INTERVALO,
+                                CASE WHEN COR = 'AMARELO' THEN TRECHOS END AS AMARELO,
+                                CASE WHEN COR = 'VERDE' THEN TRECHOS END AS VERDE,
+                                CASE WHEN COR = 'VERMELHO' THEN TRECHOS END AS VERMELHO
+                                FROM (
+                                    SELECT
+                                    time((strftime('%H', HORARIO)) || ':' ||
+                                    case when ((strftime('%M', HORARIO) / 30) * 30) = 0
+                                    then '00'
+                                    else '30' end) as INTERVALO,
+                                    COR,
+                                    CAST(AVG(QTD) as int) as TRECHOS
+                                    from(
+                                        SELECT strftime('%H:%M', data_inclusao) as HORARIO,
+                                        case
+                                        when vel_trecho >= (select avg(vel_trecho) FROM onibus_onibusvelocidade) then 'VERDE'
+                                        when vel_trecho >= (select avg(vel_trecho) - 3 FROM onibus_onibusvelocidade) then 'AMARELO'
+                                        else 'VERMELHO'
+                                        end as COR,
+                                        count(*) as QTD
+                                        FROM onibus_onibusvelocidade
+                                        WHERE data_inclusao between '{data_inicial}' and '{data_final}'
+                                        GROUP BY strftime('%H%M', data_inclusao), COR
+                                    ) a
+                                    group by INTERVALO, COR
+                                ) b
+                            )
+                            group by INTERVALO
+                            ) T2
+                        ON T1.intervalo = T2.INTERVALO
+                        LEFT JOIN
+                            (SELECT
+                            time((strftime('%H', HORARIO)) || ':' ||
+                            case when ((strftime('%M', HORARIO) / 30) * 30) = 0
+                            then '00'
+                            else '30' end) as INTERVALO,
+                            CAST(AVG(QTD) as int) as ONIBUS_CIRCULANDO
+                            from(
+                                SELECT strftime('%H:%M', data_inclusao) as HORARIO,
+                                count(*) as QTD
+                                FROM onibus_onibusposicao
+                                WHERE data_inclusao between '{data_inicial}' and '{data_final}'
+                                GROUP BY strftime('%H%M', data_inclusao)
+                            ) a
+                            group by INTERVALO) T3
+                        ON(T1.INTERVALO = T3.INTERVALO);"""
+
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+                retorno = cursor.fetchall()
+                intervalo = []
+                verde = []
+                amarelo = []
+                vermelho = []
+                onibus_circulando = []
+                for i in retorno:
+                    intervalo.append(i[0])
+                    verde.append(i[1])
+                    amarelo.append(i[2])
+                    vermelho.append(i[3])
+                    onibus_circulando.append(i[4])
+                dict_retorno = {
+                    "intervalo": intervalo,
+                    "verde": verde,
+                    "amarelo": amarelo,
+                    "vermelho": vermelho,
+                    "onibus_circulando": onibus_circulando
+                }
+
+            return Response(dict_retorno)
+        except Exception as e:
+            return Response({"erro": type(e).__name__ + ": " + str(e)})

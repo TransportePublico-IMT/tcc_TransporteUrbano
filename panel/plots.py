@@ -60,6 +60,14 @@ plot_localizacao_sptrans.layout = html.Div(
     ]
 )
 
+plot_historico_linhas = DjangoDash("HistoricoLinhas")
+plot_historico_linhas.layout = html.Div(
+    [
+        dcc.Graph(id="historico-linhas"),
+        dcc.Interval(id="historico-linhas-update", interval=60000, n_intervals=0),
+    ]
+)
+
 plot_cards_lotacao = DjangoDash("CardsLotacao", add_bootstrap_links=True)
 plot_cards_lotacao.layout = html.Div(
     [
@@ -290,6 +298,59 @@ def update_onibus_historico(self):
             height=220,
             hovermode="closest",
             uirevision=True,
+        ),
+    }
+    return ret
+
+@plot_historico_linhas.callback(
+    dash.dependencies.Output("historico-linhas", "figure"),
+    [dash.dependencies.Input("historico-linhas-update", "n_intervals")],
+)
+def update_historico_linhas(self):
+    data = apis.historico_linhas(
+        "http://localhost/api",
+        "/onibus-velocidade/historico/"
+    )
+
+    verde = go.Scatter(x=data['intervalo'], y=data['verde'],
+                        mode='lines',
+                        name='Rápido',
+                        marker={"color": "#28a745"})
+    amarelo = go.Scatter(x=data['intervalo'], y=data['amarelo'],
+                        mode='lines',
+                        name='Intenso',
+                        marker={"color": "#ffc107"})
+    vermelho = go.Scatter(x=data['intervalo'], y=data['vermelho'],
+                        mode='lines',
+                        name='Lento',
+                        marker={"color": "#dc3545"})
+    onibus_circulando = go.Bar(x=data['intervalo'], y=data['onibus_circulando'],
+                        name='Ônibus circulando',
+                        marker_color="#212529",
+                        opacity=0.2,
+                        yaxis="y2")
+
+    traces = [onibus_circulando, verde, amarelo, vermelho]
+
+    ret = {
+        "data": traces,
+        "layout": go.Layout(
+            margin=dict(t=10, b=50, l=40, r=70),
+            height=300,
+            hovermode="closest",
+            uirevision=True,
+            yaxis2=dict(
+                title="Ônibus circulando",
+                anchor="x",
+                overlaying="y",
+                side="right",
+            ),
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="left"
+            )
         ),
     }
     return ret
