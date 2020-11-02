@@ -60,9 +60,31 @@ plot_localizacao_sptrans.layout = html.Div(
     ]
 )
 
-plot_historico_linhas = DjangoDash("HistoricoLinhas")
+plot_historico_linhas = DjangoDash("HistoricoLinhas", add_bootstrap_links=True)
 plot_historico_linhas.layout = html.Div(
     [
+        html.Div(
+            [
+                html.Span("Selecione a data",
+                style={
+                        "font-size": "18px",
+                        "font-weight": "500",
+                        "color": "#6c757d",
+                        "margin-right": "10px"
+                    },
+                ),
+                dcc.DatePickerSingle(
+                    id='date-picker-historico',
+                    date=datetime.datetime.today().date(),
+                    display_format='DD/MM/YYYY'
+                ),
+            ],
+            style={
+                    "display": "block",
+                    "text-align": "right",
+                    "padding": "8px 8px 0 0"
+                },
+        ),
         dcc.Graph(id="historico-linhas"),
         dcc.Interval(id="historico-linhas-update", interval=60000, n_intervals=0),
     ]
@@ -304,12 +326,18 @@ def update_onibus_historico(self):
 
 @plot_historico_linhas.callback(
     dash.dependencies.Output("historico-linhas", "figure"),
-    [dash.dependencies.Input("historico-linhas-update", "n_intervals")],
+    [dash.dependencies.Input('date-picker-historico', 'date')],
 )
-def update_historico_linhas(self):
+def update_historico_linhas(date_picker_value):
+    # date_convertida = datetime.datetime.strptime(date_picker_value, "%Y-%m-%dT%H:%M:%S.%f") #2020-11-02T16:19:08.992175
+    # date_convertida = date_picker_value.strftime("%Y-%m-%d")
     data = apis.historico_linhas(
         "http://localhost/api",
-        "/onibus-velocidade/historico/"
+        "/onibus-velocidade/historico/",
+        {
+            "data-inicial": date_picker_value,
+            "data-final": date_picker_value
+        }
     )
 
     verde = go.Scatter(x=data['intervalo'], y=data['verde'],
@@ -339,6 +367,9 @@ def update_historico_linhas(self):
             height=300,
             hovermode="closest",
             uirevision=True,
+            yaxis=dict(
+                title="Quantidade de trechos",
+            ),
             yaxis2=dict(
                 title="Ônibus circulando",
                 anchor="x",

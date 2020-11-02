@@ -276,15 +276,13 @@ class OnibusVelocidadeViewSet(ModelViewSet):
 
             if data_inicial is None or data_final is None:
                 today = datetime.date.today()
-                data_inicial = datetime.datetime.combine(
-                    today, datetime.datetime.min.time()
-                )
-                data_final = datetime.datetime.combine(
-                    today, datetime.datetime.max.time()
-                )
+                data_inicial = datetime.datetime.combine(today, datetime.datetime.min.time())
+                data_final = datetime.datetime.combine(today, datetime.datetime.max.time())
             else:
-                data_inicial = datetime.datetime.strptime(data_inicial, "%Y-%m-%d %H:%M:%S")
-                data_final = datetime.datetime.strptime(data_final, "%Y-%m-%d %H:%M:%S")
+                data_inicial = datetime.datetime.strptime(data_inicial, "%Y-%m-%d")
+                data_inicial = datetime.datetime.combine(data_inicial, datetime.datetime.min.time())
+                data_final = datetime.datetime.strptime(data_final, "%Y-%m-%d")
+                data_final = datetime.datetime.combine(data_final, datetime.datetime.max.time())
 
             if os.getenv("AMBIENTE").lower() == 'des':
                 data_inicial = str(data_inicial + datetime.timedelta(hours=3))
@@ -367,6 +365,8 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                     vermelho.append(i[3])
                     onibus_circulando.append(i[4])
                 dict_retorno = {
+                    "data-inicial": data_inicial,
+                    "data-final": data_final,
                     "intervalo": intervalo,
                     "verde": verde,
                     "amarelo": amarelo,
