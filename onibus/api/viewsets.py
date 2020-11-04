@@ -291,7 +291,68 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                 data_inicial = str(data_inicial)
                 data_final = str(data_final)
 
-            query = f"""SELECT strftime('%H:%M', T1.INTERVALO) AS INTERVALO,
+            if os.getenv("AMBIENTE").lower() == 'des':
+                query = f"""SELECT strftime('%H:%M', T1.INTERVALO) AS INTERVALO,
+                            COALESCE(T2.VERDE, 0) AS VERDE,
+                            COALESCE(T2.AMARELO, 0) AS AMARELO,
+                            COALESCE(T2.VERMELHO, 0) AS VERMELHO,
+                            COALESCE(T3.ONIBUS_CIRCULANDO, 0) AS ONIBUS_CIRCULANDO
+                            FROM intervalo_intervalo T1
+                            LEFT JOIN( 
+                                select INTERVALO,
+                                SUM(VERDE) AS VERDE,
+                                SUM(AMARELO) AS AMARELO,
+                                SUM(VERMELHO) AS VERMELHO
+                                from(
+                                    SELECT INTERVALO,
+                                    CASE WHEN COR = 'AMARELO' THEN TRECHOS END AS AMARELO,
+                                    CASE WHEN COR = 'VERDE' THEN TRECHOS END AS VERDE,
+                                    CASE WHEN COR = 'VERMELHO' THEN TRECHOS END AS VERMELHO
+                                    FROM (
+                                        SELECT
+                                        time((strftime('%H', HORARIO)) || ':' ||
+                                        case when ((strftime('%M', HORARIO) / 30) * 30) = 0
+                                        then '00'
+                                        else '30' end) as INTERVALO,
+                                        COR,
+                                        CAST(AVG(QTD) as int) as TRECHOS
+                                        from(
+                                            SELECT strftime('%H:%M', data_inclusao) as HORARIO,
+                                            case
+                                            when vel_trecho >= (select avg(vel_trecho) FROM onibus_onibusvelocidade) then 'VERDE'
+                                            when vel_trecho >= (select avg(vel_trecho) - 3 FROM onibus_onibusvelocidade) then 'AMARELO'
+                                            else 'VERMELHO'
+                                            end as COR,
+                                            count(*) as QTD
+                                            FROM onibus_onibusvelocidade
+                                            WHERE data_inclusao between '{data_inicial}' and '{data_final}'
+                                            GROUP BY strftime('%H%M', data_inclusao), COR
+                                        ) a
+                                        group by INTERVALO, COR
+                                    ) b
+                                )
+                                group by INTERVALO
+                                ) T2
+                            ON T1.intervalo = T2.INTERVALO
+                            LEFT JOIN
+                                (SELECT
+                                time((strftime('%H', HORARIO)) || ':' ||
+                                case when ((strftime('%M', HORARIO) / 30) * 30) = 0
+                                then '00'
+                                else '30' end) as INTERVALO,
+                                CAST(AVG(QTD) as int) as ONIBUS_CIRCULANDO
+                                from(
+                                    SELECT strftime('%H:%M', data_inclusao) as HORARIO,
+                                    count(*) as QTD
+                                    FROM onibus_onibusposicao
+                                    WHERE data_inclusao between '{data_inicial}' and '{data_final}'
+                                    GROUP BY strftime('%H%M', data_inclusao)
+                                ) a
+                                group by INTERVALO) T3
+                            ON(T1.INTERVALO = T3.INTERVALO);"""
+
+            elif os.getenv("AMBIENTE").lower() == 'prod':
+                query = f"""SELECT to_char(T1.INTERVALO, 'HH24:MI') AS INTERVALO,
                         COALESCE(T2.VERDE, 0) AS VERDE,
                         COALESCE(T2.AMARELO, 0) AS AMARELO,
                         COALESCE(T2.VERMELHO, 0) AS VERMELHO,
@@ -309,14 +370,14 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                                 CASE WHEN COR = 'VERMELHO' THEN TRECHOS END AS VERMELHO
                                 FROM (
                                     SELECT
-                                    time((strftime('%H', HORARIO)) || ':' ||
-                                    case when ((strftime('%M', HORARIO) / 30) * 30) = 0
+                                    TO_TIMESTAMP((to_char(HORARIO, 'HH24')) || ':' ||
+                                    case when ((CAST(to_char(HORARIO, 'MI') AS INT) / 30) * 30) = 0
                                     then '00'
-                                    else '30' end) as INTERVALO,
+                                    else '30' end, 'HH24:MI')::TIME as INTERVALO,
                                     COR,
                                     CAST(AVG(QTD) as int) as TRECHOS
                                     from(
-                                        SELECT strftime('%H:%M', data_inclusao) as HORARIO,
+                                        SELECT TO_TIMESTAMP(to_char(data_inclusao, 'HH24:MI'), 'HH24:MI')::TIME as HORARIO,
                                         case
                                         when vel_trecho >= (select avg(vel_trecho) FROM onibus_onibusvelocidade) then 'VERDE'
                                         when vel_trecho >= (select avg(vel_trecho) - 3 FROM onibus_onibusvelocidade) then 'AMARELO'
@@ -325,27 +386,27 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                                         count(*) as QTD
                                         FROM onibus_onibusvelocidade
                                         WHERE data_inclusao between '{data_inicial}' and '{data_final}'
-                                        GROUP BY strftime('%H%M', data_inclusao), COR
+                                        GROUP BY HORARIO, COR
                                     ) a
                                     group by INTERVALO, COR
                                 ) b
-                            )
+                            ) c
                             group by INTERVALO
                             ) T2
                         ON T1.intervalo = T2.INTERVALO
                         LEFT JOIN
                             (SELECT
-                            time((strftime('%H', HORARIO)) || ':' ||
-                            case when ((strftime('%M', HORARIO) / 30) * 30) = 0
+                            TO_TIMESTAMP((to_char(HORARIO, 'HH24')) || ':' ||
+                            case when ((CAST(to_char(HORARIO, 'MI') AS INT) / 30) * 30) = 0
                             then '00'
-                            else '30' end) as INTERVALO,
+                            else '30' end, 'HH24:MI')::TIME as INTERVALO,
                             CAST(AVG(QTD) as int) as ONIBUS_CIRCULANDO
                             from(
-                                SELECT strftime('%H:%M', data_inclusao) as HORARIO,
+                                SELECT TO_TIMESTAMP(to_char(data_inclusao, 'HH24:MI'), 'HH24:MI')::TIME as HORARIO,
                                 count(*) as QTD
                                 FROM onibus_onibusposicao
                                 WHERE data_inclusao between '{data_inicial}' and '{data_final}'
-                                GROUP BY strftime('%H%M', data_inclusao)
+                                GROUP BY HORARIO
                             ) a
                             group by INTERVALO) T3
                         ON(T1.INTERVALO = T3.INTERVALO);"""
