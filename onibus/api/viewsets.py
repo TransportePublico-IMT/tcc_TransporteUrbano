@@ -288,8 +288,8 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                 data_inicial = str(data_inicial + datetime.timedelta(hours=3))
                 data_final = str(data_final + datetime.timedelta(hours=3))
             elif os.getenv("AMBIENTE").lower() == 'prod':
-                data_inicial = str(data_inicial)
-                data_final = str(data_final)
+                data_inicial = str(data_inicial + datetime.timedelta(hours=3))
+                data_final = str(data_final + datetime.timedelta(hours=3))
 
             if os.getenv("AMBIENTE").lower() == 'des':
                 query = f"""SELECT strftime('%H:%M', T1.INTERVALO) AS INTERVALO,
