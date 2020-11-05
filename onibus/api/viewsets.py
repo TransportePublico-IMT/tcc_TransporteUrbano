@@ -275,7 +275,7 @@ class OnibusVelocidadeViewSet(ModelViewSet):
             data_final = self.request.query_params.get("data-final", None)
 
             if data_inicial is None or data_final is None:
-                today = datetime.date.today() - datetime.timedelta(hours=3)
+                today = (datetime.datetime.now() - datetime.timedelta(hours=3)).date()
                 data_inicial = datetime.datetime.combine(today, datetime.datetime.min.time())
                 data_final = datetime.datetime.combine(today, datetime.datetime.max.time())
             else:
@@ -285,11 +285,11 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                 data_final = datetime.datetime.combine(data_final, datetime.datetime.max.time())
 
             if os.getenv("AMBIENTE").lower() == 'des':
+                data_inicial = str(data_inicial + datetime.timedelta(hours=6))
+                data_final = str(data_final + datetime.timedelta(hours=6))
+            elif os.getenv("AMBIENTE").lower() == 'prod':
                 data_inicial = str(data_inicial + datetime.timedelta(hours=3))
                 data_final = str(data_final + datetime.timedelta(hours=3))
-            elif os.getenv("AMBIENTE").lower() == 'prod':
-                data_inicial = str(data_inicial)
-                data_final = str(data_final)
 
             if os.getenv("AMBIENTE").lower() == 'des':
                 query = f"""SELECT strftime('%H:%M', T1.INTERVALO) AS INTERVALO,
