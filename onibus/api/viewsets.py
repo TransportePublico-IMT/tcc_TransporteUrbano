@@ -352,24 +352,27 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                             ON(T1.INTERVALO = T3.INTERVALO);"""
 
             elif os.getenv("AMBIENTE").lower() == 'prod':
-                query = f"""SELECT to_char(T1.INTERVALO, 'HH24:MI') AS INTERVALO,
+                query = f"""SELECT to_char(T1.INTERVALO - interval '3:00', 'HH24:MI') AS INTERVALO,
                         COALESCE(T2.VERDE, 0) AS VERDE,
                         COALESCE(T2.AMARELO, 0) AS AMARELO,
                         COALESCE(T2.VERMELHO, 0) AS VERMELHO,
                         COALESCE(T3.ONIBUS_CIRCULANDO, 0) AS ONIBUS_CIRCULANDO
                         FROM intervalo_intervalo T1
                         LEFT JOIN( 
-                            select INTERVALO,
+                            select DATA,
+                            INTERVALO,
                             SUM(VERDE) AS VERDE,
                             SUM(AMARELO) AS AMARELO,
                             SUM(VERMELHO) AS VERMELHO
                             from(
-                                SELECT INTERVALO,
+                                SELECT DATA, 
+                                INTERVALO,
                                 CASE WHEN COR = 'AMARELO' THEN TRECHOS END AS AMARELO,
                                 CASE WHEN COR = 'VERDE' THEN TRECHOS END AS VERDE,
                                 CASE WHEN COR = 'VERMELHO' THEN TRECHOS END AS VERMELHO
                                 FROM (
                                     SELECT
+                                    DATA,
                                     TO_TIMESTAMP((to_char(HORARIO, 'HH24')) || ':' ||
                                     case when ((CAST(to_char(HORARIO, 'MI') AS INT) / 30) * 30) = 0
                                     then '00'
@@ -377,7 +380,8 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                                     COR,
                                     CAST(AVG(QTD) as int) as TRECHOS
                                     from(
-                                        SELECT TO_TIMESTAMP(to_char(data_inclusao, 'HH24:MI'), 'HH24:MI')::TIME as HORARIO,
+                                        SELECT to_char(data_inclusao, 'MM-DD') as DATA,
+                                        TO_TIMESTAMP(to_char(data_inclusao, 'HH24:MI'), 'HH24:MI')::TIME as HORARIO,
                                         case
                                         when vel_trecho >= (select avg(vel_trecho) FROM onibus_onibusvelocidade) then 'VERDE'
                                         when vel_trecho >= (select avg(vel_trecho) - 3 FROM onibus_onibusvelocidade) then 'AMARELO'
@@ -386,14 +390,14 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                                         count(*) as QTD
                                         FROM onibus_onibusvelocidade
                                         WHERE data_inclusao between '{data_inicial}' and '{data_final}'
-                                        GROUP BY HORARIO, COR
+                                        GROUP BY HORARIO, COR, DATA
                                     ) a
-                                    group by INTERVALO, COR
+                                    group by INTERVALO, COR, DATA
                                 ) b
                             ) c
-                            group by INTERVALO
+                            group by INTERVALO, DATA
                             ) T2
-                        ON T1.intervalo = T2.INTERVALO - interval '3:00'
+                        ON T1.intervalo = T2.INTERVALO
                         LEFT JOIN
                             (SELECT
                             TO_TIMESTAMP((to_char(HORARIO, 'HH24')) || ':' ||
@@ -402,14 +406,16 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                             else '30' end, 'HH24:MI')::TIME as INTERVALO,
                             CAST(AVG(QTD) as int) as ONIBUS_CIRCULANDO
                             from(
-                                SELECT TO_TIMESTAMP(to_char(data_inclusao, 'HH24:MI'), 'HH24:MI')::TIME as HORARIO,
+                                SELECT to_char(data_inclusao, 'MM-DD') as DATA,
+                                TO_TIMESTAMP(to_char(data_inclusao, 'HH24:MI'), 'HH24:MI')::TIME as HORARIO,
                                 count(*) as QTD
                                 FROM onibus_onibusposicao
                                 WHERE data_inclusao between '{data_inicial}' and '{data_final}'
-                                GROUP BY HORARIO
+                                GROUP BY HORARIO, DATA
                             ) a
-                            group by INTERVALO) T3
-                        ON(T1.INTERVALO = T3.INTERVALO - interval '3:00');"""
+                            group by INTERVALO, DATA) T3
+                        ON(T1.INTERVALO = T3.INTERVALO)
+                        ORDER BY DATA, INTERVALO;"""
 
             with connection.cursor() as cursor:
                 cursor.execute(query)
