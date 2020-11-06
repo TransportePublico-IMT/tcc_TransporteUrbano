@@ -75,7 +75,7 @@ plot_historico_linhas.layout = html.Div(
                 ),
                 dcc.DatePickerSingle(
                     id='date-picker-historico',
-                    date=datetime.datetime.today().date(),
+                    date=(datetime.datetime.now() - datetime.timedelta(hours=3)).date(),
                     display_format='DD/MM/YYYY'
                 ),
             ],

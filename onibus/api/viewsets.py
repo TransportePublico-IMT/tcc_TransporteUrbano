@@ -393,7 +393,7 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                             ) c
                             group by INTERVALO
                             ) T2
-                        ON T1.intervalo = T2.INTERVALO
+                        ON T1.intervalo = T2.INTERVALO - interval '3:00'
                         LEFT JOIN
                             (SELECT
                             TO_TIMESTAMP((to_char(HORARIO, 'HH24')) || ':' ||
@@ -409,7 +409,7 @@ class OnibusVelocidadeViewSet(ModelViewSet):
                                 GROUP BY HORARIO
                             ) a
                             group by INTERVALO) T3
-                        ON(T1.INTERVALO = T3.INTERVALO);"""
+                        ON(T1.INTERVALO = T3.INTERVALO - interval '3:00');"""
 
             with connection.cursor() as cursor:
                 cursor.execute(query)
