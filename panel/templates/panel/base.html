@@ -21,7 +21,7 @@
 </head>
 
 <body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark pl-0">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark pl-0" style="z-index:9999999">
         <a class="navbar-brand" href="{% url 'home' %}">
             {% comment %} <img src="{% static 'logo.png' %}" class="d-inline-block" alt="logo"/> {% endcomment %}
             <span class="ml-1">Transporte Público</span>
@@ -97,16 +97,16 @@
                     {% endblock %}
                 </div>
             </main>
-            <footer class="py-2 bg-light mt-auto">
+            <footer class="py-2 bg-light mt-auto" style="z-index:999999">
                 <div class="container-fluid">
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">&copy; SA-Trans {% now "Y" %}</div>
                         <div>
-                            <a href="https://github.com/arthurnovello/">Arthur Novello</a>
+                            <a href="https://github.com/arthurnovello/"><i class="fab fa-github"></i> Arthur Novello</a>
                             &middot;
-                            <a href="https://github.com/lucaezellner">Luca Ezellner</a>
+                            <a href="https://github.com/lucaezellner"><i class="fab fa-github"></i> Luca Ezellner</a>
                             &middot;
-                            <a href="https://github.com/lucasmaarques">Lucas Marques</a>
+                            <a href="https://github.com/lucasmaarques"><i class="fab fa-github"></i> Lucas Marques</a>
                         </div>
                     </div>
                 </div>

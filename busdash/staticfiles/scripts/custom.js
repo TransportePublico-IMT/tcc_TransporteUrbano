@@ -53,11 +53,19 @@ $(document).ready(function() {
             {"data": "longitude"},
             {"data": "data_inclusao"}
         ],
-        columnDefs: [{//2020-08-22T16:10:56.404988Z
+        columnDefs: [
+            { width: 70, targets: 0 },
+            { width: 60, targets: 1 },
+            { width: 70, targets: 2 },
+            { width: 60, targets: 3, render: $.fn.dataTable.render.number(',', '.', 4) },
+            { width: 60, targets: 4, render: $.fn.dataTable.render.number(',', '.', 4)},
+            {
             targets: 5,
+            width: 100,
             render: $.fn.dataTable.render.moment('YYYY-MM-DDTHH:mm:ss.SSSSSSZ', 'DD/MM/YYYY - HH:mm:ss')
         }],
         "scrollY": "160px",
+        "scrollX": true,
         "oLanguage": portugues
     });
 
@@ -65,10 +73,10 @@ $(document).ready(function() {
         //"ajax": {url:"/api/onibus-lotacao/ultimos/?intervalo=1", dataSrc:""},
         "ajax": {url:"/api/eventos/", dataSrc:""},
         "columns": [
-            {"data": "nome", "width": "25%"},
-            {"data": "endereco", "width": "25%"},
-            {"data": "data_info", "width": "25%"},
-            {"data": "link", "width": "25%",
+            {"data": "nome"},
+            {"data": "endereco"},
+            {"data": "data_info"},
+            {"data": "link",
                 "render": function(data, type, row, meta){
                     if(type === 'display'){
                         data = '<a href="' + data + '">' + data + '</a>';
@@ -78,7 +86,15 @@ $(document).ready(function() {
                 }
             }
         ],
+        columnDefs: [
+            { width: 70, targets: 0 },
+            { width: 90, targets: 1 },
+            { width: 70, targets: 2 },
+            { width: 70, targets: 3 }
+        ],
+        fixedColumns: true,
         "scrollY": "300px",
+        "scrollX": true,
         "oLanguage": portugues
     });
 
